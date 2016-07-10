@@ -21,7 +21,7 @@ buildscript {
 }
 
 apply plugin: 'forge'
-group = "com.cosmicdan.toomanyconflicts"
+group = "com.cosmicdan.reignadditionals"
 
 ext.configFile = file "build.properties"
 
@@ -113,7 +113,7 @@ artifacts {
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'com.cosmicdan.toomanyconflicts.core.CorePlugin',
+        attributes 'FMLCorePlugin': 'com.cosmicdan.reignadditionals.core.CorePlugin',
                    'FMLCorePluginContainsFMLMod': 'true'
     }
 }
