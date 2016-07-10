@@ -8,6 +8,7 @@ import net.minecraftforge.common.config.Property;
 
 public class ModConfig {
     public static int STICK_DROP_CHANCE = 2;
+    public static boolean MIXING_ENABLED_COBBLE = false;
     
     public static String CONFIG_PATH;
     
@@ -29,9 +30,13 @@ public class ModConfig {
         CONFIG.load();
         
         // general config entries
-        Property STICK_DROP_CHANCE_PROP = CONFIG.get("general", "stickDropChance", STICK_DROP_CHANCE);
+        Property STICK_DROP_CHANCE_PROP = CONFIG.get("additions", "stickDropChance", STICK_DROP_CHANCE);
         STICK_DROP_CHANCE_PROP.comment = "Set the 1 in X (this many) chance that a stick is added to \n"
                                        + "the drop list of hand-harvested leaves.";
+
+        Property MIXING_ENABLED_COBBLE_PROP = CONFIG.get("removals", "enabledMixingForCobble", MIXING_ENABLED_COBBLE);
+        MIXING_ENABLED_COBBLE_PROP.comment = "Set to true to allow the mixing of flowing water + lava \n"
+                                       + "to generate Cobblestone"; 
         
         // save config if it differs to the default values
         if(CONFIG.hasChanged())
@@ -39,6 +44,7 @@ public class ModConfig {
         
         // Need to actually populate the values *after* saving config, otherwise first-run defaults are not persisted
         STICK_DROP_CHANCE = STICK_DROP_CHANCE_PROP.getInt(STICK_DROP_CHANCE);
+        MIXING_ENABLED_COBBLE = MIXING_ENABLED_COBBLE_PROP.getBoolean(MIXING_ENABLED_COBBLE);
         
         // all done
         Main.LOGGER.info("Config loaded");
