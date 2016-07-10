@@ -1,0 +1,15 @@
+[{
+  "modid": "reignadditionals",
+  "name": "ReignAdditionals",
+  "description": "Additional stuff for the Reign Modpack",
+  "version": "${version}",
+  "mcversion": "${MCversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["CosmicDan"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": [],
+  "useDependencyInformation": "false"
+}]
