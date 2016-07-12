@@ -1,5 +1,6 @@
 package com.cosmicdan.reignadditionals;
 
+import com.cosmicdan.reignadditionals.blocks.ModBlocks;
 import com.cosmicdan.reignadditionals.events.BlockEvents;
 import com.cosmicdan.reignadditionals.events.PlayerEvents;
 import com.cosmicdan.reignadditionals.items.ModItems;
@@ -12,6 +13,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -40,13 +42,16 @@ public class Main {
     public void preInit(FMLPreInitializationEvent event) {
         Main.LOGGER = event.getModLog();
         ModConfig.doConfig(event.getModConfigurationDirectory());
+        PROXY.preInit(event);
     }
     
     @EventHandler
     public void init(FMLInitializationEvent event) {
-        PROXY.init();
-        ModItems.init();
-        MinecraftForge.EVENT_BUS.register(new BlockEvents());
-        MinecraftForge.EVENT_BUS.register(new PlayerEvents());
+        PROXY.init(event);
+    }
+    
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        PROXY.postInit(event);
     }
 }

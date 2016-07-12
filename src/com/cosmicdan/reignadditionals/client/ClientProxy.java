@@ -3,18 +3,36 @@ package com.cosmicdan.reignadditionals.client;
 import com.cosmicdan.reignadditionals.CommonProxy;
 import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.client.particles.*;
+import com.cosmicdan.reignadditionals.client.renderers.ModRenderers;
+import com.cosmicdan.reignadditionals.client.renderers.tileentities.ModTileEntityRenderers;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.event.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 public class ClientProxy extends CommonProxy {
+    
     @Override
-    public void init() {
-        super.init();
+    public void preInit(FMLPreInitializationEvent event) {
+        super.preInit(event);
+        // register custom renderers
+        ModRenderers.init();
     }
+    
+    @Override
+    public void init(FMLInitializationEvent event) {
+        super.init(event);
+        
+    }
+    
+    @Override
+    public void postInit(FMLPostInitializationEvent event) {
+        ModTileEntityRenderers.init();
+    }
+    
     
     @Override
     public void generateParticleSteamFizz(World world, int posX, int posY, int posZ) {

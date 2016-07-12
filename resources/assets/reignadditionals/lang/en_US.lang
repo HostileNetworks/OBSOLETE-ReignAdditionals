@@ -1,2 +1,8 @@
 item.flintHandaxe.name=Flint Handaxe
 item.flintHandaxe.tooltip=Chop trees and cut other things, albeit not very quickly.
+
+tile.campfire.name=Campfire
+tile.campfire.tooltip=Light by right-clicking with flint. Add fuel by right-clicking with stick. Add raw food by right-clicking with it. Remove cooked food by right-click with hand (or anything if full).
+tile.campfireLit.name=Campfire (Burning)
+tile.campfireLit.tooltip=Not craftable. Refer to the Campfire (the item before this one).
+
