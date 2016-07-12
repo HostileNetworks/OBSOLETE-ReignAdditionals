@@ -1,6 +1,7 @@
 package com.cosmicdan.reignadditionals.events;
 
 import com.cosmicdan.reignadditionals.Main;
+import com.cosmicdan.reignadditionals.ModConfig;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
@@ -13,8 +14,10 @@ import net.minecraftforge.event.entity.player.PlayerEvent.BreakSpeed;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class PlayerEvents {
+    
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (ModConfig.ALLOW_BREAKING_WITHOUT_TOOL) return;
         if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             Block tryingToHarvest = event.world.getBlock(event.x, event.y, event.z); 
             if (!tryHarvest(tryingToHarvest, event.entityPlayer, false)) {
@@ -25,12 +28,18 @@ public class PlayerEvents {
 
     @SubscribeEvent
     public void onBreakSpeed(BreakSpeed event) {
+        if (ModConfig.ALLOW_BREAKING_WITHOUT_TOOL) return;
         Block tryingToHarvest = event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z); 
         if (!tryHarvest(tryingToHarvest, event.entityPlayer)) {
             event.setCanceled(true);
         }
     }
     
+    
+    /*
+     * Helper methods for block harvest/break prevention stuff
+     * 
+     */
     private boolean tryHarvest(Block block, EntityPlayer entityPlayer) {
         return tryHarvest(block, entityPlayer, true);
     }
@@ -55,5 +64,4 @@ public class PlayerEvents {
         }
         return false;
     }
-
 }
