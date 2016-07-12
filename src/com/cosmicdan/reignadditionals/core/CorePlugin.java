@@ -3,7 +3,7 @@ package com.cosmicdan.reignadditionals.core;
 import java.util.Map;
 
 import com.cosmicdan.reignadditionals.Main;
-import com.cosmicdan.reignadditionals.core.transformers.TransformBlockLiquid;
+import com.cosmicdan.reignadditionals.core.transformers.*;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
@@ -14,7 +14,11 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 public class CorePlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
-        return new String[]{TransformBlockLiquid.class.getName()};
+        return new String[]{
+          TransformBlockLiquid.class.getName(),
+          TransformBlockLiquid2.class.getName(),
+          TransformBlockDynamicLiquid.class.getName()
+        };
     }
 
     @Override

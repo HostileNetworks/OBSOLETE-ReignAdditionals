@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -21,6 +23,14 @@ import net.minecraftforge.common.MinecraftForge;
 public class Main {
     public static final String MODID = "reignadditionals";
     public static final String MODNAME = "ReignAdditionals";
+    private static final String PROXY_CLIENT = "com.cosmicdan.reignadditionals.client.ClientProxy";
+    private static final String PROXY_COMMON = "com.cosmicdan.reignadditionals.CommonProxy";
+    
+    @Instance(MODNAME)
+    public static Main INSTANCE;
+    
+    @SidedProxy(clientSide=PROXY_CLIENT, serverSide=PROXY_COMMON)
+    public static CommonProxy PROXY;
     
     public static Logger LOGGER = LogManager.getLogger(Main.MODNAME);
 
@@ -32,6 +42,7 @@ public class Main {
     
     @EventHandler
     public void init(FMLInitializationEvent event) {
+        PROXY.init();
         MinecraftForge.EVENT_BUS.register(new BlockEvents());
     }
 }

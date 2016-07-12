@@ -29,7 +29,7 @@ public class TransformBlockLiquid extends AbstractInjectJumpTransformer {
 
     @Override
     public String getReason() {
-        return "Option to prevent cobble generating from lava + water mixing";
+        return "Option to prevent cobblestone generating when water spread makes contact with lava";
     }
     
     @Override
