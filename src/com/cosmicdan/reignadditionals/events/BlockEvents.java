@@ -21,7 +21,7 @@ public class BlockEvents {
             // leaves broken
             if (event.harvester != null) {
                 // player broke leaves
-                if (event.harvester.getCurrentEquippedItem() == null)
+                if (event.harvester.getHeldItem() == null)
                     // player is bare handed
                     if (event.world.rand.nextInt(ModConfig.STICK_DROP_CHANCE - 1) == 0)
                         event.drops.add(new ItemStack(Items.stick));

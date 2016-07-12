@@ -1,6 +1,8 @@
 package com.cosmicdan.reignadditionals;
 
 import com.cosmicdan.reignadditionals.events.BlockEvents;
+import com.cosmicdan.reignadditionals.events.PlayerEvents;
+import com.cosmicdan.reignadditionals.items.ModItems;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,5 +46,6 @@ public class Main {
     public void init(FMLInitializationEvent event) {
         PROXY.init();
         MinecraftForge.EVENT_BUS.register(new BlockEvents());
+        MinecraftForge.EVENT_BUS.register(new PlayerEvents());
     }
 }
