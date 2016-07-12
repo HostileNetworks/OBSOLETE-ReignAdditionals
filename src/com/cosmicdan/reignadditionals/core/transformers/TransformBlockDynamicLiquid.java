@@ -5,6 +5,7 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import com.cosmicdan.reignadditionals.asmhelper.ASMHelper;
 
@@ -43,7 +44,11 @@ public class TransformBlockDynamicLiquid extends AbstractInjectJumpTransformer {
     @Override
     public InsnList injectOps(InsnList toInject) {
         toInject = new InsnList();
-        toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/cosmicdan/reignadditionals/events/LiquidMixingEvents", "hotAndColdLiquidContact", "()V", false));
+        toInject.add(new VarInsnNode(Opcodes.ALOAD, 1));
+        toInject.add(new VarInsnNode(Opcodes.ILOAD, 2));
+        toInject.add(new VarInsnNode(Opcodes.ILOAD, 3));
+        toInject.add(new VarInsnNode(Opcodes.ILOAD, 4));
+        toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/cosmicdan/reignadditionals/events/LiquidMixingEvents", "hotAndColdLiquidContact", "(Lnet/minecraft/world/World;III)V", false));
         toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/cosmicdan/reignadditionals/events/LiquidMixingEvents", "smoothstoneMix", "()Z", false));
         toInject.add(new JumpInsnNode(Opcodes.IFEQ, targetNode.label));
         return toInject; 
