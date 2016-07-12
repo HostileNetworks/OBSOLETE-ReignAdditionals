@@ -45,6 +45,7 @@ public class Main {
     @EventHandler
     public void init(FMLInitializationEvent event) {
         PROXY.init();
+        ModItems.init();
         MinecraftForge.EVENT_BUS.register(new BlockEvents());
         MinecraftForge.EVENT_BUS.register(new PlayerEvents());
     }
