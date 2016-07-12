@@ -29,11 +29,6 @@ public class TileEntityCampfireRenderer extends TileEntitySpecialRenderer {
     private float V;
     
     public TileEntityCampfireRenderer() {
-        spitrod = ModBlocks.CAMPFIRE_LIT.getIcon(1, 7);
-        spitrodMap[0] = spitrod.getMinU();
-        spitrodMap[1] = spitrod.getMinV();
-        spitrodMap[2] = spitrod.getMaxU();
-        spitrodMap[3] = spitrod.getMaxV();
     }
     
     @Override
@@ -42,10 +37,16 @@ public class TileEntityCampfireRenderer extends TileEntitySpecialRenderer {
     }
     
     public void renderThisTileEntity(TileEntityCampfire tileEntity, double dx, double dy, double dz, float f) {
-        if (tileEntity.metadata > 6) { // has food in inventory, draw the spit and items
+        if (tileEntity.metadata > 6) {
+             // has food in inventory, draw the spit and items
             tessellator = Tessellator.instance;
-            
             // draw the spit rod
+            // for some reason calling getIcon doesn't work when done in the constructor. It USED to back in Imperium days though... 
+            spitrod = ModBlocks.CAMPFIRE_LIT.getIcon(1, 7);
+            spitrodMap[0] = spitrod.getMinU();
+            spitrodMap[1] = spitrod.getMinV();
+            spitrodMap[2] = spitrod.getMaxU();
+            spitrodMap[3] = spitrod.getMaxV();
             transY = dy + 0.9375D;
             transZ = dz + 0.5078125D;
             transScale = 0.25F;
