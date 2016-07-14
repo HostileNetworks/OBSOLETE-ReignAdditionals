@@ -47,6 +47,7 @@ public class BlockCampfireLit extends BlockContainer {
             for (int i = 0; i < tileEntity.itemSlotStatus.length; i++) {
                 itemStack = tileEntity.itemSlot[i];
                 if (itemStack != null) {
+                    itemStack = itemStack.copy();
                     itemStack.stackSize = 1;
                     ranX = this.random.nextFloat() * 0.8F + 0.1F;
                     ranY = this.random.nextFloat() * 0.8F + 0.1F;
@@ -77,8 +78,7 @@ public class BlockCampfireLit extends BlockContainer {
     @Override
     public boolean onBlockActivated(World world, int posX, int posY, int posZ, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
         TileEntityCampfire tileEntity = (TileEntityCampfire) world.getTileEntity(posX, posY, posZ);
-        if (!world.isRemote)
-        {
+        if (!world.isRemote) {
             if (player.getHeldItem() != null)
             {
                 int blockMeta = world.getBlockMetadata(posX, posY, posZ);
