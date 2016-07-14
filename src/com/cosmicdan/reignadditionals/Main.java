@@ -21,7 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
     modid = Main.MODID, 
     name = Main.MODNAME,
     version = "${version}",
-    dependencies = "required-after:Forge@[10.13,)"
+    dependencies = "required-after:Forge@[10.13,);required-after:Waila"
 )
 
 public class Main {

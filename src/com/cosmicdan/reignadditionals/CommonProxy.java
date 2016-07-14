@@ -17,6 +17,7 @@ public class CommonProxy {
         ModBlocks.init();
         ModItems.init();
         ModTileEntities.init();
+        FMLInterModComms.sendMessage("Waila", "register", "com.cosmicdan.reignadditionals.waila.WailaDataProvider.init");
     }
     
     public void init(FMLInitializationEvent event) {
