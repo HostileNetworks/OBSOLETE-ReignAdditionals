@@ -18,9 +18,11 @@ public class PlayerEvents {
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (ModConfig.ALLOW_BREAKING_WITHOUT_TOOL) return;
+        if (event.entityPlayer.capabilities.isCreativeMode) return;
         if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             Block tryingToHarvest = event.world.getBlock(event.x, event.y, event.z); 
-            if (!tryHarvest(tryingToHarvest, event.entityPlayer, false)) {
+            int blockMeta = event.world.getBlockMetadata(event.x, event.y, event.z);
+            if (!tryHarvest(tryingToHarvest, blockMeta, event.entityPlayer)) {
                 event.setCanceled(true);
             }
         }
@@ -29,8 +31,10 @@ public class PlayerEvents {
     @SubscribeEvent
     public void onBreakSpeed(BreakSpeed event) {
         if (ModConfig.ALLOW_BREAKING_WITHOUT_TOOL) return;
-        Block tryingToHarvest = event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z); 
-        if (!tryHarvest(tryingToHarvest, event.entityPlayer)) {
+        if (event.entityPlayer.capabilities.isCreativeMode) return;
+        Block tryingToHarvest = event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z);
+        int blockMeta = event.entityPlayer.worldObj.getBlockMetadata(event.x, event.y, event.z);
+        if (!tryHarvest(tryingToHarvest, blockMeta, event.entityPlayer)) {
             event.setCanceled(true);
         }
     }
@@ -40,25 +44,24 @@ public class PlayerEvents {
      * Helper methods for block harvest/break prevention stuff
      * 
      */
-    private boolean tryHarvest(Block block, EntityPlayer entityPlayer) {
-        return tryHarvest(block, entityPlayer, true);
-    }
 
-    private boolean tryHarvest(Block block, EntityPlayer entityPlayer, boolean silentCancel) {
+    private boolean tryHarvest(Block block, int blockMeta, EntityPlayer entityPlayer) {
         if (block.getMaterial() == Material.wood)
-            return letPlayerUseTool(entityPlayer, "axe", silentCancel);
+            return letPlayerUseTool(block, blockMeta, entityPlayer, "axe");
         if (block.getMaterial() == Material.rock)
-            return letPlayerUseTool(entityPlayer, "pickaxe", silentCancel);
+            return letPlayerUseTool(block, blockMeta, entityPlayer, "pickaxe");
         // allow the player to punch-break/harvest anything that isn't explicitly prevented
         return true;
     }
 
-    private boolean letPlayerUseTool(EntityPlayer entityPlayer, String toolClass, boolean silentCancel) {
+    private boolean letPlayerUseTool(Block block, int blockMeta, EntityPlayer entityPlayer, String toolClass) {
+        boolean silentCancel = false;
         if (entityPlayer.getHeldItem() != null) {
-            if (entityPlayer.getHeldItem().getItem() instanceof ItemTool)
-                if (((ItemTool)entityPlayer.getHeldItem().getItem()).getToolClasses(entityPlayer.getHeldItem()).contains(toolClass))
+            silentCancel = true;
+            if ((block.canHarvestBlock(entityPlayer, blockMeta)) && (entityPlayer.getHeldItem().getItem().getHarvestLevel(entityPlayer.getHeldItem(), toolClass) != -1))
                     return true;
-        } else if (!silentCancel) {
+        }
+        if (!silentCancel) {
             entityPlayer.attackEntityFrom(DamageSource.generic, 0.1f);
             entityPlayer.addChatMessage(new ChatComponentText("Ouch! It seems I need the right tool for the job..."));
         }
