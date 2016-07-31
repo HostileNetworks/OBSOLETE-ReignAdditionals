@@ -22,7 +22,7 @@ public class PlayerEvents {
         if (event.action == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
             Block tryingToHarvest = event.world.getBlock(event.x, event.y, event.z); 
             int blockMeta = event.world.getBlockMetadata(event.x, event.y, event.z);
-            if (!tryHarvest(tryingToHarvest, blockMeta, event.entityPlayer)) {
+            if (!tryHarvest(tryingToHarvest, blockMeta, event.entityPlayer, false)) {
                 event.setCanceled(true);
             }
         }
@@ -34,7 +34,7 @@ public class PlayerEvents {
         if (event.entityPlayer.capabilities.isCreativeMode) return;
         Block tryingToHarvest = event.entityPlayer.worldObj.getBlock(event.x, event.y, event.z);
         int blockMeta = event.entityPlayer.worldObj.getBlockMetadata(event.x, event.y, event.z);
-        if (!tryHarvest(tryingToHarvest, blockMeta, event.entityPlayer)) {
+        if (!tryHarvest(tryingToHarvest, blockMeta, event.entityPlayer, true)) {
             event.setCanceled(true);
         }
     }
@@ -45,23 +45,22 @@ public class PlayerEvents {
      * 
      */
 
-    private boolean tryHarvest(Block block, int blockMeta, EntityPlayer entityPlayer) {
+    private boolean tryHarvest(Block block, int blockMeta, EntityPlayer entityPlayer, boolean silent) {
         if (block.getMaterial() == Material.wood)
-            return letPlayerUseTool(block, blockMeta, entityPlayer, "axe");
+            return letPlayerUseTool(block, blockMeta, entityPlayer, "axe", silent);
         if (block.getMaterial() == Material.rock)
-            return letPlayerUseTool(block, blockMeta, entityPlayer, "pickaxe");
+            return letPlayerUseTool(block, blockMeta, entityPlayer, "pickaxe", silent);
         // allow the player to punch-break/harvest anything that isn't explicitly prevented
         return true;
     }
 
-    private boolean letPlayerUseTool(Block block, int blockMeta, EntityPlayer entityPlayer, String toolClass) {
-        boolean silentCancel = false;
+    private boolean letPlayerUseTool(Block block, int blockMeta, EntityPlayer entityPlayer, String toolClass, boolean silent) {
         if (entityPlayer.getHeldItem() != null) {
-            silentCancel = true;
+            silent = true;
             if ((block.canHarvestBlock(entityPlayer, blockMeta)) && (entityPlayer.getHeldItem().getItem().getHarvestLevel(entityPlayer.getHeldItem(), toolClass) != -1))
                     return true;
         }
-        if (!silentCancel) {
+        if (!silent) {
             entityPlayer.attackEntityFrom(DamageSource.generic, 0.1f);
             entityPlayer.addChatMessage(new ChatComponentText("Ouch! It seems I need the right tool for the job..."));
         }
