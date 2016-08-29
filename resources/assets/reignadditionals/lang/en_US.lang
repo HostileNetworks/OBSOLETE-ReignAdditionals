@@ -1,5 +1,7 @@
 item.flintHandaxe.name=Flint Handaxe
-item.flintHandaxe.tooltip=Chop trees and cut other things, albeit not very quickly.
+item.flintHandaxe.tooltip=Can chop trees (though not very well) and also shear blocks with right-click (half the time). Careful - even if the shear is unsuccessful, the block will still be destroyed!
+
+item.treeSap.name=Tree Sap
 
 tile.campfire.name=Campfire
 tile.campfire.tooltip=Primitive food cooking. Light by right-clicking with flint. Add fuel by right-clicking with stick. Add raw food by right-clicking with it. Remove cooked food by right-click with hand (or anything if full).

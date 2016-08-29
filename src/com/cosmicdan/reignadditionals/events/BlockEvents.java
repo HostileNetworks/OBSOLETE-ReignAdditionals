@@ -2,10 +2,12 @@ package com.cosmicdan.reignadditionals.events;
 
 import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.ModConfig;
+import com.cosmicdan.reignadditionals.items.ModItems;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeavesBase;
+import net.minecraft.block.BlockLog;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -23,8 +25,14 @@ public class BlockEvents {
                 // player broke leaves
                 if (event.harvester.getHeldItem() == null)
                     // player is bare handed
-                    if (event.world.rand.nextInt(ModConfig.STICK_DROP_CHANCE - 1) == 0)
+                    if (event.world.rand.nextInt(ModConfig.STICK_DROP_CHANCE) == 0)
                         event.drops.add(new ItemStack(Items.stick));
+            }
+        } else
+        if (event.block instanceof BlockLog) {
+            if (event.blockMetadata == 1) { // spruce log
+                if (event.world.rand.nextInt(ModConfig.TREESAP_DROP_CHANCE) == 0)
+                    event.drops.add(new ItemStack(ModItems.TREESAP));
             }
         }
     }

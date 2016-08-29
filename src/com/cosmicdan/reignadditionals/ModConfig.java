@@ -8,6 +8,7 @@ import net.minecraftforge.common.config.Property;
 
 public class ModConfig {
     public static int STICK_DROP_CHANCE = 2;
+    public static int TREESAP_DROP_CHANCE = 7;
     public static boolean MIXING_ENABLED_COBBLE = false;
     public static boolean MIXING_ENABLED_SMOOTHSTONE = false;
     public static boolean ALLOW_BREAKING_WITHOUT_TOOL = false;
@@ -35,6 +36,10 @@ public class ModConfig {
         Property STICK_DROP_CHANCE_PROP = CONFIG.get("additions", "stickDropChance", STICK_DROP_CHANCE);
         STICK_DROP_CHANCE_PROP.comment = "Set the 1 in X (this many) chance that a stick is added to \n"
                                        + "the drop list of hand-harvested leaves.";
+        
+        Property TREESAP_DROP_CHANCE_PROP = CONFIG.get("additions", "treeSapDropChance", TREESAP_DROP_CHANCE);
+        TREESAP_DROP_CHANCE_PROP.comment = "Set the 1 in X (this many) chance that treesap is added to \n"
+                                       + "the drop list of spruce log harvests.";
 
         // game removals
         Property MIXING_ENABLED_COBBLE_PROP = CONFIG.get("removals", "enabledMixingForCobble", MIXING_ENABLED_COBBLE);
@@ -52,6 +57,7 @@ public class ModConfig {
         
         // Need to actually populate the values *after* saving config, otherwise first-run defaults are not persisted
         STICK_DROP_CHANCE = STICK_DROP_CHANCE_PROP.getInt(STICK_DROP_CHANCE);
+        TREESAP_DROP_CHANCE = TREESAP_DROP_CHANCE_PROP.getInt(TREESAP_DROP_CHANCE);
         MIXING_ENABLED_COBBLE = MIXING_ENABLED_COBBLE_PROP.getBoolean(MIXING_ENABLED_COBBLE);
         MIXING_ENABLED_SMOOTHSTONE = MIXING_ENABLED_SMOOTHSTONE_PROP.getBoolean(MIXING_ENABLED_SMOOTHSTONE);
         ALLOW_BREAKING_WITHOUT_TOOL = ALLOW_BREAKING_WITHOUT_TOOL_PROP.getBoolean(ALLOW_BREAKING_WITHOUT_TOOL);
