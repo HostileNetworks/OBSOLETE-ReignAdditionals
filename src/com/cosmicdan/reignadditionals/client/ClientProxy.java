@@ -2,6 +2,7 @@ package com.cosmicdan.reignadditionals.client;
 
 import com.cosmicdan.reignadditionals.CommonProxy;
 import com.cosmicdan.reignadditionals.Main;
+import com.cosmicdan.reignadditionals.client.gui.GuiTextOverlay;
 import com.cosmicdan.reignadditionals.client.particles.*;
 import com.cosmicdan.reignadditionals.client.renderers.ModRenderers;
 import com.cosmicdan.reignadditionals.client.renderers.tileentities.ModTileEntityRenderers;
@@ -31,6 +32,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         ModTileEntityRenderers.init();
+        MinecraftForge.EVENT_BUS.register(new GuiTextOverlay(Minecraft.getMinecraft()));
     }
     
     

@@ -12,6 +12,9 @@ public class ModConfig {
     public static boolean MIXING_ENABLED_COBBLE = false;
     public static boolean MIXING_ENABLED_SMOOTHSTONE = false;
     public static boolean ALLOW_BREAKING_WITHOUT_TOOL = false;
+    public static int MOON_PHASE_TIME = 1;
+    public static int YEAR_OFFSET = 1000;
+    public static String SUFFIX = "AGC";
     
     public static String CONFIG_PATH;
     
@@ -50,6 +53,9 @@ public class ModConfig {
         
         Property ALLOW_BREAKING_WITHOUT_TOOL_PROP = CONFIG.get("removals", "enabledBreakingBlocksWithoutTool", ALLOW_BREAKING_WITHOUT_TOOL);
         ALLOW_BREAKING_WITHOUT_TOOL_PROP.comment = "Allow breaking some blocks (stone, wood) without their right tool class (pickaxe, axe)?";
+        
+        // gui stuff
+        
         
         // save config if it differs to the default values
         if(CONFIG.hasChanged())
