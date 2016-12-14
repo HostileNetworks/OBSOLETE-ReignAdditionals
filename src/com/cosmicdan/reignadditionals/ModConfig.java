@@ -12,9 +12,13 @@ public class ModConfig {
     public static boolean MIXING_ENABLED_COBBLE = false;
     public static boolean MIXING_ENABLED_SMOOTHSTONE = false;
     public static boolean ALLOW_BREAKING_WITHOUT_TOOL = false;
-    public static int MOON_PHASE_TIME = 1;
-    public static int YEAR_OFFSET = 1000;
-    public static String SUFFIX = "AGC";
+    
+    public static int DAYS_PER_MOON_PHASE = 6;
+    public static int STARTING_YEAR = 1000;
+    public static int FADE_MAINTEXT_AT = 50;
+    public static int FADE_INFOS_AT = 240;
+    public static int FADE_OUT_TIME = 80;
+    public static String YEAR_SUFFIX = "AGC";
     
     public static String CONFIG_PATH;
     
@@ -54,8 +58,26 @@ public class ModConfig {
         Property ALLOW_BREAKING_WITHOUT_TOOL_PROP = CONFIG.get("removals", "enabledBreakingBlocksWithoutTool", ALLOW_BREAKING_WITHOUT_TOOL);
         ALLOW_BREAKING_WITHOUT_TOOL_PROP.comment = "Allow breaking some blocks (stone, wood) without their right tool class (pickaxe, axe)?";
         
-        // gui stuff
         
+        // gui stuff
+        CONFIG.addCustomCategoryComment("gui", "GUI settings are all client-side. Some should match the pack/server for lore or gameplay reasons, but they don't technically have to.");
+        Property DAYS_PER_MOON_PHASE_PROP = CONFIG.get("gui", "daysPerMoonPhase", DAYS_PER_MOON_PHASE);
+        DAYS_PER_MOON_PHASE_PROP.comment = "How many days per moon-phase. Default is vanilla. This MUST match the Harder Wildlife moonPhaseTime.";
+        
+        Property STARTING_YEAR_PROP = CONFIG.get("gui", "startingYear", STARTING_YEAR);
+        STARTING_YEAR_PROP.comment = "Starting year. For display only. 1000 is default for the Reign modpack.";
+        
+        Property FADE_MAINTEXT_AT_PROP = CONFIG.get("gui", "fadeMaintextAt", FADE_MAINTEXT_AT);
+        FADE_MAINTEXT_AT_PROP.comment = "How many ticks (20 ticks in a second) until the big 'Day' and 'Year' text that appears on new days should start fading out. You can change this to whatever you prefer.";
+        
+        Property FADE_INFOS_AT_PROP = CONFIG.get("gui", "fadeInfosAt", FADE_INFOS_AT);
+        FADE_INFOS_AT_PROP.comment = "How many ticks (20 ticks in a second) until the next full moon/season info that appears on new days should start fading out. You can change this to whatever you prefer.";
+        
+        Property FADE_OUT_TIME_PROP = CONFIG.get("gui", "fadeOutTime", FADE_OUT_TIME);
+        FADE_OUT_TIME_PROP.comment = "How many ticks (20 ticks in a second) the new day elements should fade out over.";
+        
+        Property YEAR_SUFFIX_PROP = CONFIG.get("gui", "yearSuffix", YEAR_SUFFIX);
+        YEAR_SUFFIX_PROP.comment = "String to append at the end of the Year display. Purely cosmetic, default of AGC is a Reign Modpack lore thing (means 'After Great Cleansing').";        
         
         // save config if it differs to the default values
         if(CONFIG.hasChanged())
