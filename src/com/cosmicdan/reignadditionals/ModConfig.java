@@ -62,7 +62,7 @@ public class ModConfig {
         // gui stuff
         CONFIG.addCustomCategoryComment("gui", "GUI settings are all client-side. Some should match the pack/server for lore or gameplay reasons, but they don't technically have to.");
         Property DAYS_PER_MOON_PHASE_PROP = CONFIG.get("gui", "daysPerMoonPhase", DAYS_PER_MOON_PHASE);
-        DAYS_PER_MOON_PHASE_PROP.comment = "How many days per moon-phase. Default is vanilla. This MUST match the Harder Wildlife moonPhaseTime.";
+        DAYS_PER_MOON_PHASE_PROP.comment = "How many days per moon-phase. Vanilla is 1. This MUST match the Harder Wildlife moonPhaseTime.";
         
         Property STARTING_YEAR_PROP = CONFIG.get("gui", "startingYear", STARTING_YEAR);
         STARTING_YEAR_PROP.comment = "Starting year. For display only. 1000 is default for the Reign modpack.";
