@@ -10,8 +10,7 @@ public class EntityEvents {
     @SubscribeEvent
     public void onPlayerLoggedIn(EntityJoinWorldEvent event) {
         if ((event.world.isRemote) && (event.entity instanceof EntityPlayer)) {
-            // force show the status gui on player login  
-            GuiTextOverlay.resetLastDay();
+            GuiTextOverlay.triggerPlayerJoin();
         }
     }
 }

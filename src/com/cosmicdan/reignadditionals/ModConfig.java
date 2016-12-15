@@ -68,13 +68,13 @@ public class ModConfig {
         STARTING_YEAR_PROP.comment = "Starting year. For display only. 1000 is default for the Reign modpack.";
         
         Property FADE_MAINTEXT_AT_PROP = CONFIG.get("gui", "fadeMaintextAt", FADE_MAINTEXT_AT);
-        FADE_MAINTEXT_AT_PROP.comment = "How many ticks (20 ticks in a second) until the big 'Day' and 'Year' text that appears on new days should start fading out. You can change this to whatever you prefer.";
+        FADE_MAINTEXT_AT_PROP.comment = "How many render ticks (40 render ticks in a second?) until the big 'Day' and 'Year' text that appears on new days should start fading out. You can change this to whatever you prefer.";
         
         Property FADE_INFOS_AT_PROP = CONFIG.get("gui", "fadeInfosAt", FADE_INFOS_AT);
-        FADE_INFOS_AT_PROP.comment = "How many ticks (20 ticks in a second) until the next full moon/season info that appears on new days should start fading out. You can change this to whatever you prefer.";
+        FADE_INFOS_AT_PROP.comment = "How many render ticks (40 render ticks in a second?) until the next full moon/season info that appears on new days should start fading out. You can change this to whatever you prefer.";
         
         Property FADE_OUT_TIME_PROP = CONFIG.get("gui", "fadeOutTime", FADE_OUT_TIME);
-        FADE_OUT_TIME_PROP.comment = "How many ticks (20 ticks in a second) the new day elements should fade out over.";
+        FADE_OUT_TIME_PROP.comment = "How many render ticks (40 render ticks in a second?)  the new day elements should fade out over.";
         
         Property YEAR_SUFFIX_PROP = CONFIG.get("gui", "yearSuffix", YEAR_SUFFIX);
         YEAR_SUFFIX_PROP.comment = "String to append at the end of the Year display. Purely cosmetic, default of AGC is a Reign Modpack lore thing (means 'After Great Cleansing').";        

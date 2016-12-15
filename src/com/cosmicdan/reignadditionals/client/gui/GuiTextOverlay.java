@@ -118,8 +118,6 @@ public class GuiTextOverlay {
         re.bindTexture(iconsSeasons[currentSeason]);
         drawTexturedRect(20, 2, 0, 0, 16, 16, 16, 16);
         
-        
-        
         if (doNewDayText) {
             newDayDrawTime++;
             
@@ -207,14 +205,77 @@ public class GuiTextOverlay {
                 
                 argb = ( alphaRemainingInfos << 24 ) | ( 255 << 16 ) | ( 255 << 8) | 255;
                 mc.fontRenderer.drawString(text, screenWidth / 2 + 60 - (mc.fontRenderer.getStringWidth(text) / 2) + (24 / 2) - 24, screenHeight / (scaleFactor * 2) - 10 + 26, argb, true);
+                
+                // reset alpha
+                GL11.glColor4f(255, 255, 255, 255f);
             }
         }
-        
+                
         GL11.glPopMatrix();
     }
     
-    public static void resetLastDay() {
+    private static boolean fireWelcomeGraphic = false;
+    private static int welcomeGraphicProgress = 0;
+    
+    @SubscribeEvent
+    public void renderChatEventPre(RenderGameOverlayEvent.Chat event) {
+        if (event.type != ElementType.CHAT)
+            return;
+        if (fireWelcomeGraphic) {
+            welcomeGraphicProgress++;
+            
+            int fadeInAt = 6 * 20; // start from 3 seconds
+            int fadeOutAt = fadeInAt + 20 * 10; // ..end 5 seconds later 
+            
+            int alpha = 200; // keep the branding a little translucent
+            int fadeTime = 60; // fade over 1.5 seconds
+            
+            if (welcomeGraphicProgress > fadeOutAt) { 
+                if (welcomeGraphicProgress < fadeOutAt + fadeTime) {
+                    alpha -= (int) (alpha * (welcomeGraphicProgress - fadeOutAt) * 1f/(float)fadeTime);
+                } else {
+                    fireWelcomeGraphic = false;
+                    welcomeGraphicProgress = 0;
+                    return;
+                }
+            }
+            
+            if (welcomeGraphicProgress < fadeInAt) {
+                return;
+            } else {
+                if (welcomeGraphicProgress < fadeInAt + fadeTime) {
+                    alpha = (int) (alpha * (welcomeGraphicProgress - fadeInAt) * 1f/(float)fadeTime);
+                    if (alpha < 4)
+                        alpha = 4; // again, anything less than 4 is opaque for some reason
+                }
+            }
+            
+            event.setCanceled(true);
+            
+            GL11.glColor4f(255, 255, 255, ((float)alpha / 255f));
+
+            GL11.glPushMatrix();
+            
+            int startX = event.posX + screenWidth / 40;
+            int startY = event.posY - 50;
+            
+            re.bindTexture(new ResourceLocation("reignadditionals:textures/gui/reign_white.png"));
+            drawTexturedRect(startX, startY, 0, 0, 100, 61, 100, 61);
+            
+            int argb = ( alpha << 24 ) | ( 255 << 16 ) | ( 255 << 8) | 255;
+            String text = "HostileNetworks.com";
+            mc.fontRenderer.drawString(text, startX + 50 - mc.fontRenderer.getStringWidth(text) / 2, startY + 61, argb, true);
+            
+            
+            GL11.glPopMatrix();
+            GL11.glColor4f(255, 255, 255, 255f);
+        }
+    }
+    
+    public static void triggerPlayerJoin() {
         lastDay = -1;
+        fireWelcomeGraphic = true;
+        welcomeGraphicProgress = 0;
     }
     
     private void drawTexturedRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
