@@ -55,8 +55,6 @@ public class GuiTextOverlay {
         for (int i = 0; i < 4; i++) {
             iconsSeasons[i] = new ResourceLocation("reignadditionals:textures/gui/season_" + i + ".png");
         }
-        
-        
     }
     
     @SubscribeEvent
@@ -82,7 +80,7 @@ public class GuiTextOverlay {
         }
         
         if (lastDay != currentDay) {
-            // new day, update moonphase and season
+            // new day, refresh moonphase and season
             currentMoonphase = player.worldObj.getMoonPhase();
             currentSeason = currentDay / daysPerSeason;
             doNewDayText = true;
@@ -202,7 +200,11 @@ public class GuiTextOverlay {
         GL11.glPopMatrix();
     }
     
-    public void drawTexturedRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
+    public static void resetLastDay() {
+        lastDay = -1;
+    }
+    
+    private void drawTexturedRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
         float f = 1F / (float)textureWidth;
         float f1 = 1F / (float)textureHeight;
         Tessellator.instance.startDrawingQuads();
