@@ -25,7 +25,8 @@ public class GuiTextOverlay {
     private static final ResourceLocation[] iconsMoonphases = new ResourceLocation[8];
     private static final ResourceLocation[] iconsSeasons = new ResourceLocation[4];
     
-    private static int TICKER = 0;
+    private static int TICKER_MAX = 10;
+    private static int TICKER = TICKER_MAX;
     
     private static int lastDay = -1;
     private static int currentDay = 0;
@@ -70,7 +71,7 @@ public class GuiTextOverlay {
         
         // update the current day/year values
         TICKER++;
-        if (TICKER == 10) {
+        if (TICKER >= TICKER_MAX) {
             TICKER = 0;
             currentDay = (int) ((player.worldObj.getWorldTime() / 24000L));
             currentYear = currentDay / daysPerYear + ModConfig.STARTING_YEAR;
@@ -169,28 +170,30 @@ public class GuiTextOverlay {
                 GL11.glPopMatrix();
                 GL11.glPushMatrix();
                 
-                // build the moon/season strings
-                if (daysUntilFullMoon == daysPerMonth)
+                // build the moon string
+                if ((daysUntilFullMoon == daysPerMonth) && (currentDay > 1))
                     text = "TODAY";
                 else
                     text = "in " + daysUntilFullMoon + (daysUntilFullMoon == 1 ? " day" : " days");
-                if (daysUntilNextSeason == daysPerSeason)
-                    text = "TODAY";
-                else
-                    text = "in " + daysUntilNextSeason + (daysUntilNextSeason == 1 ? " day" : " days");
                 
                 // colorize the full moon countdown if < 12 days to go (fades to red)
                 int colorChannelBlueAndGreen = 255; 
-                if ((daysUntilFullMoon < 12) || (daysUntilFullMoon == daysPerMonth)) {
+                if (((daysUntilFullMoon < 12) || (daysUntilFullMoon == daysPerMonth)) && (currentDay > 1)) {
                     if (daysUntilFullMoon == daysPerMonth)
                         colorChannelBlueAndGreen = 0;
                     else
                         colorChannelBlueAndGreen =- 255 + (daysUntilFullMoon * 20) ;
                 }
                 
-                // draw moon/season strings
+                // draw moon string
                 argb = ( alphaRemainingInfos << 24 ) | ( 255 << 16 ) | ( colorChannelBlueAndGreen << 8) | colorChannelBlueAndGreen;
                 mc.fontRenderer.drawString(text, screenWidth / 2 - 60 - (mc.fontRenderer.getStringWidth(text) / 2) + (24 / 2), screenHeight / (scaleFactor * 2) - 10 + 26, argb, true);
+                
+                // build and draw the season string
+                if (daysUntilNextSeason == daysPerSeason)
+                    text = "TODAY";
+                else
+                    text = "in " + daysUntilNextSeason + (daysUntilNextSeason == 1 ? " day" : " days");
                 
                 argb = ( alphaRemainingInfos << 24 ) | ( 255 << 16 ) | ( 255 << 8) | 255;
                 mc.fontRenderer.drawString(text, screenWidth / 2 + 60 - (mc.fontRenderer.getStringWidth(text) / 2) + (24 / 2) - 24, screenHeight / (scaleFactor * 2) - 10 + 26, argb, true);
