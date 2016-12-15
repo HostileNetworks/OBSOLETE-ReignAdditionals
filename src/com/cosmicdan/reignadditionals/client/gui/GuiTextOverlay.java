@@ -9,7 +9,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.shadowmage.ancientwarfare.core.gamedata.Timekeeper;
@@ -25,7 +28,7 @@ public class GuiTextOverlay {
     private static final ResourceLocation[] iconsMoonphases = new ResourceLocation[8];
     private static final ResourceLocation[] iconsSeasons = new ResourceLocation[4];
     
-    private static int TICKER_MAX = 10;
+    private static int TICKER_MAX = 15;
     private static int TICKER = TICKER_MAX;
     
     private static int lastDay = -1;
@@ -43,6 +46,7 @@ public class GuiTextOverlay {
     
     private static String line1 = "";
     private static String line2 = "";
+    private static String biomeName = "";
     
     private static boolean doNewDayText = false;
     private static int newDayDrawTime = 0;
@@ -78,6 +82,10 @@ public class GuiTextOverlay {
             if (currentYear > ModConfig.STARTING_YEAR) {
                 currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * daysPerYear);
             }
+            // also update the current biome name
+            int posX = MathHelper.floor_double(player.posX);
+            int posZ = MathHelper.floor_double(player.posZ);
+            biomeName = mc.theWorld.getChunkFromBlockCoords(posX, posZ).getBiomeGenForWorldCoords(posX & 15, posZ & 15, this.mc.theWorld.getWorldChunkManager()).biomeName;
         }
         
         if (lastDay != currentDay) {
@@ -96,7 +104,8 @@ public class GuiTextOverlay {
                 ":" +
                 (Timekeeper.getTimeOfDayMinute() < 10 ? "0" : "") + Timekeeper.getTimeOfDayMinute() +
                 ", " +
-                player.worldObj.getBiomeGenForCoords(player.chunkCoordX, player.chunkCoordZ).biomeName;
+                biomeName;
+                
         line2 = "Day " + (currentDay + 1) + ", " + currentYear + " " + ModConfig.YEAR_SUFFIX;
         
 
