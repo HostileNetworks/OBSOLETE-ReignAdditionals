@@ -165,7 +165,8 @@ public class GuiTextOverlay {
                 GL11.glColor4f(255, 255, 255, ((float)alphaRemainingInfos / 255f));
                 re.bindTexture(iconsMoonphases[0]);
                 drawTexturedRect(screenWidth / 2 - 60, screenHeight / 2 - 10, 0, 0, 24, 24, 24, 24);
-                re.bindTexture(iconsSeasons[(currentSeason < 3 ? currentSeason + 1 : 0)]);
+                int nextSeason = currentSeason < 3 ? currentSeason + 1 : 0;
+                re.bindTexture(iconsSeasons[daysUntilNextSeason == daysPerSeason ? currentSeason : nextSeason]);
                 drawTexturedRect(screenWidth / 2 + 60 - 24, screenHeight / 2 - 10, 0, 0, 24, 24, 24, 24);
                 GL11.glPopMatrix();
                 GL11.glPushMatrix();
