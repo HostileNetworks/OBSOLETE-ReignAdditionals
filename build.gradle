@@ -48,14 +48,22 @@ task buildInfo {
 }
 
 ext.artifact_version = 'NFG'
-artifact_version = "${config.mod_version}.${project.buildInfo.buildNum}"
+artifact_version = "${config.mod_version}.${config.mod_buildnumber}.${project.buildInfo.buildNum}"
 
 if (System.getenv("RELEASEMODE") == "true") {
-    artifact_version = "${config.mod_version}"
+    artifact_version = "${config.mod_version}.${config.mod_buildnumber}"
 }
 
 version = "${config.minecraft_version}-${artifact_version}"
 //archivesBaseName = "modid"
+
+task incrementBuildnumber(type:Copy){
+    ant.propertyfile(file: configFile) {
+        entry(key: 'mod_buildnumber', type: 'int', operation: '+', value: 001)
+    }
+}
+
+compileJava.dependsOn incrementBuildnumber
 
 minecraft {
     version = config.minecraft_version + "-" + config.forge_version + "-" + config.minecraft_version
