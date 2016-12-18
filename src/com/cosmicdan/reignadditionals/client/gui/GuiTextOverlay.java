@@ -106,7 +106,7 @@ public class GuiTextOverlay {
                 ", " +
                 biomeName;
                 
-        line2 = "Day " + (currentDay + 1) + ", " + currentYear + " " + ModConfig.YEAR_SUFFIX;
+        line2 = "Day " + (currentDay + 1 + (Timekeeper.getTimeOfDayHour() < 6 ? 1 : 0)) + ", " + currentYear + " " + ModConfig.YEAR_SUFFIX;
         
 
         GL11.glPushMatrix();
