@@ -68,6 +68,9 @@ public class GuiTextOverlay {
             return;
         }
         
+        if (mc.gameSettings.showDebugInfo)
+            return;
+        
         player = mc.thePlayer;
         screenWidth = event.resolution.getScaledWidth();
         screenHeight = event.resolution.getScaledHeight();
