@@ -20,9 +20,21 @@ public class ModConfig {
     public static int FADE_OUT_TIME = 80;
     public static String YEAR_SUFFIX = "AGC";
     
+    public static int TELEPORT_MIN_DISTANCE = 300;
+    public static int TELEPORT_SEARCH_WATERBIOME_RADIUS = 64;
+    public static int TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = 50;
+    public static int TELEPORT_CLAIMEDCHUNK_BUFFER = 30;
+    public static String TELEPORT_MESSAGE = "Teleporting...";
+    
+    
     public static String CONFIG_PATH;
     
     private static Configuration CONFIG;
+    
+    // not set by config but re-calculated after config loads
+    public static int daysPerMonth = DAYS_PER_MOON_PHASE * 8; // 8 moon phases per month (in Harder Wildlife) 
+    public static int daysPerSeason = daysPerMonth * 2; // 2 months per season (in Harder Wildlife)
+    public static int daysPerYear = daysPerSeason * 4; // 4 seasons per year
     
     public static void doConfig(File configPath) {
         // ensure the config directory exists
@@ -77,7 +89,27 @@ public class ModConfig {
         FADE_OUT_TIME_PROP.comment = "How many render ticks (40 render ticks in a second?)  the new day elements should fade out over.";
         
         Property YEAR_SUFFIX_PROP = CONFIG.get("gui", "yearSuffix", YEAR_SUFFIX);
-        YEAR_SUFFIX_PROP.comment = "String to append at the end of the Year display. Purely cosmetic, default of AGC is a Reign Modpack lore thing (means 'After Great Cleansing').";        
+        YEAR_SUFFIX_PROP.comment = "String to append at the end of the Year display. Purely cosmetic, default of AGC is a Reign Modpack lore thing (means 'After Great Cleansing').";
+        
+        
+        // teleporter stuff
+        CONFIG.addCustomCategoryComment("teleporter", "Settings related to the Teleporter Stone / Materializer starter items");
+        
+        Property TELEPORT_MIN_DISTANCE_PROP = CONFIG.get("teleporter", "teleportMinimumDistance", TELEPORT_MIN_DISTANCE);
+        TELEPORT_MIN_DISTANCE_PROP.comment = "Minimum block distance between each teleportation attempt.";
+        
+        Property TELEPORT_SEARCH_WATERBIOME_RADIUS_PROP = CONFIG.get("teleporter", "teleportSearchWaterBiomeRadius", TELEPORT_SEARCH_WATERBIOME_RADIUS);
+        TELEPORT_SEARCH_WATERBIOME_RADIUS_PROP.comment = "When a Plains-type biome is found, only teleport if there is a beach/ocean/river biome within this many blocks (radius) of that location.";
+        
+        Property TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN_PROP = CONFIG.get("teleporter", "teleportSearchWaterBiomeRetryCooldown", TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN);
+        TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN_PROP.comment = "When the beach/ocean/river radius search fails, wait this many blocks before scanning again. Remember that the search pattern is an outwards spiral - so keep this number low to make best use of potential starting locations.";
+        
+        Property TELEPORT_MESSAGE_PROP = CONFIG.get("teleporter", "teleportMessage", TELEPORT_MESSAGE);
+        TELEPORT_MESSAGE_PROP.comment = "Chat message to display when the teleport stone starts searching for a location.";
+        
+        Property TELEPORT_CLAIMEDCHUNK_BUFFER_PROP = CONFIG.get("teleporter", "teleportClaimedChunkBuffer", TELEPORT_CLAIMEDCHUNK_BUFFER);
+        TELEPORT_CLAIMEDCHUNK_BUFFER_PROP.comment = "Minimim space/distance in chunks (i.e. a radius) to teleport the player from chunks that are already claimed by non-team players";
+        
         
         // save config if it differs to the default values
         if(CONFIG.hasChanged())
@@ -89,6 +121,23 @@ public class ModConfig {
         MIXING_ENABLED_COBBLE = MIXING_ENABLED_COBBLE_PROP.getBoolean(MIXING_ENABLED_COBBLE);
         MIXING_ENABLED_SMOOTHSTONE = MIXING_ENABLED_SMOOTHSTONE_PROP.getBoolean(MIXING_ENABLED_SMOOTHSTONE);
         ALLOW_BREAKING_WITHOUT_TOOL = ALLOW_BREAKING_WITHOUT_TOOL_PROP.getBoolean(ALLOW_BREAKING_WITHOUT_TOOL);
+        
+        DAYS_PER_MOON_PHASE = DAYS_PER_MOON_PHASE_PROP.getInt(DAYS_PER_MOON_PHASE);
+        STARTING_YEAR = STARTING_YEAR_PROP.getInt(STARTING_YEAR);
+        FADE_MAINTEXT_AT = FADE_MAINTEXT_AT_PROP.getInt(FADE_MAINTEXT_AT);
+        FADE_INFOS_AT = FADE_INFOS_AT_PROP.getInt(FADE_INFOS_AT);
+        FADE_OUT_TIME = FADE_OUT_TIME_PROP.getInt(FADE_OUT_TIME);
+        YEAR_SUFFIX = YEAR_SUFFIX_PROP.getString();
+        
+        TELEPORT_MIN_DISTANCE = TELEPORT_MIN_DISTANCE_PROP.getInt(TELEPORT_MIN_DISTANCE);
+        TELEPORT_SEARCH_WATERBIOME_RADIUS = TELEPORT_SEARCH_WATERBIOME_RADIUS_PROP.getInt(TELEPORT_SEARCH_WATERBIOME_RADIUS);
+        TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN_PROP.getInt(TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN);
+        TELEPORT_MESSAGE = TELEPORT_MESSAGE_PROP.getString();
+        
+        // reset some initial config-based values
+        daysPerMonth = ModConfig.DAYS_PER_MOON_PHASE * 8;
+        daysPerSeason = daysPerMonth * 2;
+        daysPerYear = daysPerSeason * 4;
         
         // all done
         Main.LOGGER.info("Config loaded");

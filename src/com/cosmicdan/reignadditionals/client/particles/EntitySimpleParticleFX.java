@@ -8,8 +8,6 @@
  */
 package com.cosmicdan.reignadditionals.client.particles;
 
-import com.cosmicdan.reignadditionals.Main;
-
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.world.World;
 

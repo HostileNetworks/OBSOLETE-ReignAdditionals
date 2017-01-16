@@ -2,7 +2,6 @@ package com.cosmicdan.reignadditionals.items;
 
 import java.util.List;
 
-import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.util.TextUtils;
 
 import cpw.mods.fml.common.registry.LanguageRegistry;

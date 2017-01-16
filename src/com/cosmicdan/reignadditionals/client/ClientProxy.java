@@ -1,16 +1,13 @@
 package com.cosmicdan.reignadditionals.client;
 
 import com.cosmicdan.reignadditionals.CommonProxy;
-import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.client.gui.GuiTextOverlay;
 import com.cosmicdan.reignadditionals.client.particles.*;
 import com.cosmicdan.reignadditionals.client.renderers.ModRenderers;
 import com.cosmicdan.reignadditionals.client.renderers.tileentities.ModTileEntityRenderers;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.event.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 

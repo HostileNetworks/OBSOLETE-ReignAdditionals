@@ -42,7 +42,7 @@ public class BlockCampfire extends Block {
         if (!world.isRemote) {
             if (player.getHeldItem() == null)
                 return true;
-            if ((player.getHeldItem().getItem() == Items.flint) || (player.getHeldItem().getItem() == Items.flint_and_steel)) {
+            if ((player.getHeldItem().getItem() == Items.stick) || (player.getHeldItem().getItem() == Items.flint_and_steel)) {
                 //world.setBlockMetadataWithNotify(posX, posY, posZ, 1, 3);
                 world.setBlockToAir(posX, posY, posZ);
                 world.setBlock(posX, posY, posZ, ModBlocks.CAMPFIRE_LIT, 2, 3);

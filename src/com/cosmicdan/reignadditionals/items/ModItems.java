@@ -10,11 +10,17 @@ public class ModItems {
     
     public static Item FLINT_HANDAXE;
     public static Item TREESAP;
+    public static Item TELEPORTER;
+    public static Item MATERIALIZER;
     
     public static final void init() {
         FLINT_HANDAXE = new ItemFlintAxe(FLINT, "flintHandaxe");
         GameRegistry.registerItem(FLINT_HANDAXE, "flintHandaxe");
         TREESAP = new ItemTreeSap("treeSap");
         GameRegistry.registerItem(TREESAP, "treeSap");
+        TELEPORTER = new ItemTeleporter("teleporter");
+        GameRegistry.registerItem(TELEPORTER, "teleporter");
+        MATERIALIZER = new ItemMaterializer("materializer");
+        GameRegistry.registerItem(MATERIALIZER, "materializer");
     }
 }

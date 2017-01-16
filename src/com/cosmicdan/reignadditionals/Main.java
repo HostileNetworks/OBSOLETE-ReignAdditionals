@@ -1,10 +1,5 @@
 package com.cosmicdan.reignadditionals;
 
-import com.cosmicdan.reignadditionals.blocks.ModBlocks;
-import com.cosmicdan.reignadditionals.events.BlockEvents;
-import com.cosmicdan.reignadditionals.events.PlayerEvents;
-import com.cosmicdan.reignadditionals.items.ModItems;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +10,6 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.common.MinecraftForge;
 
 @Mod(
     modid = Main.MODID, 

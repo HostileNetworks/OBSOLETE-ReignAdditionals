@@ -81,25 +81,22 @@ public class BlockCampfireLit extends BlockContainer {
         if (!world.isRemote) {
             if (player.getHeldItem() != null)
             {
-                int blockMeta = world.getBlockMetadata(posX, posY, posZ);
-                if (blockMeta > 0 )
+                Item item = player.getHeldItem().getItem();
+                if (item == Items.stick)
+                    if (tileEntity.addFuel())
+                        --player.getHeldItem().stackSize;
+                else if (world.getBlockMetadata(posX, posY, posZ) > 0 )
                 {
-                    // check for foods to add
-                    Item item = player.getHeldItem().getItem();
+                    // check for food
                     if (item instanceof ItemFood)
                     {
-                        // check for cookable meats
                         ItemStack itemStack = player.getHeldItem();
                         
+                        // try and add the food
                         if (tileEntity.tryAddItem(itemStack))
                             --itemStack.stackSize;
-                        
                         else // slots are all full, save them time and return an item instead
                             tryRemoveItem(world, player, tileEntity);
-                    }
-                    else if(item == Items.stick) {
-                        if (tileEntity.addFuel())
-                            --player.getHeldItem().stackSize;
                     }
                     else // not a valid input item, assume the player is trying to remove an item
                         tryRemoveItem(world, player, tileEntity);

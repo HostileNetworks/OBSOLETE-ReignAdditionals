@@ -2,7 +2,6 @@ package com.cosmicdan.reignadditionals.core;
 
 import java.util.Map;
 
-import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.core.transformers.*;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;

@@ -2,10 +2,7 @@ package com.cosmicdan.reignadditionals.waila;
 
 import java.util.List;
 
-import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.blocks.BlockCampfireLit;
-import com.cosmicdan.reignadditionals.blocks.ModBlocks;
-import com.cosmicdan.reignadditionals.blocks.tileentities.TileEntityCampfire;
 import com.cosmicdan.reignadditionals.util.TextUtils;
 
 import mcp.mobius.waila.api.IWailaConfigHandler;

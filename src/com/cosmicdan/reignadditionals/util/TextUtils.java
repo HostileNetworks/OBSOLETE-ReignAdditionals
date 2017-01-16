@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.cosmicdan.reignadditionals.Main;
-
 import net.minecraft.util.StatCollector;
 
 public class TextUtils {

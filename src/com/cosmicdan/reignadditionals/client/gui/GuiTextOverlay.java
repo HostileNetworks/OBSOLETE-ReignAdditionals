@@ -11,8 +11,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.shadowmage.ancientwarfare.core.gamedata.Timekeeper;
@@ -39,10 +37,6 @@ public class GuiTextOverlay {
     
     private static int daysUntilFullMoon = 0;
     private static int daysUntilNextSeason = 0;
-    
-    private static final int daysPerMonth = ModConfig.DAYS_PER_MOON_PHASE * 8; // 8 moon phases per month
-    private static final int daysPerSeason = daysPerMonth * 2; // 2 months per season (in Harder Wildlife)
-    private static final int daysPerYear = daysPerSeason * 4; // 4 seasons per year
     
     private static String line1 = "";
     private static String line2 = "";
@@ -81,9 +75,9 @@ public class GuiTextOverlay {
         if (TICKER >= TICKER_MAX) {
             TICKER = 0;
             currentDay = (int) ((player.worldObj.getWorldTime() / 24000L));
-            currentYear = currentDay / daysPerYear + ModConfig.STARTING_YEAR;
+            currentYear = currentDay / ModConfig.daysPerYear + ModConfig.STARTING_YEAR;
             if (currentYear > ModConfig.STARTING_YEAR) {
-                currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * daysPerYear);
+                currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * ModConfig.daysPerYear);
             }
             // also update the current biome name
             int posX = MathHelper.floor_double(player.posX);
@@ -94,11 +88,11 @@ public class GuiTextOverlay {
         if (lastDay != currentDay) {
             // new day, refresh moonphase and season
             currentMoonphase = player.worldObj.getMoonPhase();
-            currentSeason = currentDay / daysPerSeason;
+            currentSeason = currentDay / ModConfig.daysPerSeason;
             doNewDayText = true;
             newDayDrawTime = 0;
-            daysUntilFullMoon = daysPerMonth - (currentDay % daysPerMonth);
-            daysUntilNextSeason = daysPerSeason - (currentDay % daysPerSeason);
+            daysUntilFullMoon = ModConfig.daysPerMonth - (currentDay % ModConfig.daysPerMonth);
+            daysUntilNextSeason = ModConfig.daysPerSeason - (currentDay % ModConfig.daysPerSeason);
         }
         lastDay = currentDay;
         
@@ -176,21 +170,21 @@ public class GuiTextOverlay {
                 re.bindTexture(iconsMoonphases[0]);
                 drawTexturedRect(screenWidth / 2 - 60, screenHeight / 2 - 10, 0, 0, 24, 24, 24, 24);
                 int nextSeason = currentSeason < 3 ? currentSeason + 1 : 0;
-                re.bindTexture(iconsSeasons[daysUntilNextSeason == daysPerSeason ? currentSeason : nextSeason]);
+                re.bindTexture(iconsSeasons[daysUntilNextSeason == ModConfig.daysPerSeason ? currentSeason : nextSeason]);
                 drawTexturedRect(screenWidth / 2 + 60 - 24, screenHeight / 2 - 10, 0, 0, 24, 24, 24, 24);
                 GL11.glPopMatrix();
                 GL11.glPushMatrix();
                 
                 // build the moon string
-                if ((daysUntilFullMoon == daysPerMonth) && (currentDay > 1))
+                if ((daysUntilFullMoon == ModConfig.daysPerMonth) && (currentDay > 1))
                     text = "TODAY";
                 else
                     text = "in " + daysUntilFullMoon + (daysUntilFullMoon == 1 ? " day" : " days");
                 
                 // colorize the full moon countdown if < 12 days to go (fades to red)
                 int colorChannelBlueAndGreen = 255; 
-                if (((daysUntilFullMoon < 12) || (daysUntilFullMoon == daysPerMonth)) && (currentDay > 1)) {
-                    if (daysUntilFullMoon == daysPerMonth)
+                if (((daysUntilFullMoon < 12) || (daysUntilFullMoon == ModConfig.daysPerMonth)) && (currentDay > 1)) {
+                    if (daysUntilFullMoon == ModConfig.daysPerMonth)
                         colorChannelBlueAndGreen = 0;
                     else
                         colorChannelBlueAndGreen =- 255 + (daysUntilFullMoon * 20) ;
@@ -201,7 +195,7 @@ public class GuiTextOverlay {
                 mc.fontRenderer.drawString(text, screenWidth / 2 - 60 - (mc.fontRenderer.getStringWidth(text) / 2) + (24 / 2), screenHeight / (scaleFactor * 2) - 10 + 26, argb, true);
                 
                 // build and draw the season string
-                if (daysUntilNextSeason == daysPerSeason)
+                if (daysUntilNextSeason == ModConfig.daysPerSeason)
                     text = "TODAY";
                 else
                     text = "in " + daysUntilNextSeason + (daysUntilNextSeason == 1 ? " day" : " days");

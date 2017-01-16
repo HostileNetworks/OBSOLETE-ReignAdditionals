@@ -1,7 +1,12 @@
 item.flintHandaxe.name=Flint Handaxe
 item.flintHandaxe.tooltip=Can chop trees (though not very well) and also shear blocks with right-click (half the time). Careful - even if the shear is unsuccessful, the block will still be destroyed!
-
 item.treeSap.name=Tree Sap
+item.teleporter.name=Teleport Stone
+item.teleporter.tooltip=Hold Shift to read details
+item.teleporter.tooltip.more=Using this will dematerialize and teleport you to the nearest ideal spawn location. Using again will teleport to the next ideal location, progressing in an outwards spiral from the original location you used it. Use the 'Materializer' item once you've found somewhere ideal.
+item.materializer.name=Materializer
+item.materializer.tooltip=Hold Shift to read details
+item.materializer.tooltip.more=Use this to rematerialize. This item and the teleport stone will be destroyed, you will no longer be immortal, and you will be able to interact with the world again.
 
 tile.campfire.name=Campfire
 tile.campfire.tooltip=Primitive food cooking. Light by right-clicking with flint. Add fuel by right-clicking with stick. Add raw food by right-clicking with it. Remove cooked food by right-click with hand (or anything if full).
@@ -9,3 +14,5 @@ tile.campfireLit.name=Campfire
 tile.campfireLit.tooltip=Refer to the other Campfire's tooltip.
 
 waila.campfirelit.body=minutes of fuel remaining
+
+siegeevent.cantsleep.msg=I can't sleep now, I'm under siege!

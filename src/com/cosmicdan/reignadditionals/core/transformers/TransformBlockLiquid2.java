@@ -3,8 +3,6 @@ package com.cosmicdan.reignadditionals.core.transformers;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 
-import com.cosmicdan.reignadditionals.asmhelper.ASMHelper;
-
 public class TransformBlockLiquid2 extends AbstractInjectMethodStart {
 
     @Override
