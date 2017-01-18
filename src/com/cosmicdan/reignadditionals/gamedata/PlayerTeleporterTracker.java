@@ -65,17 +65,21 @@ public class PlayerTeleporterTracker implements IExtendedEntityProperties {
     @Override
     public void loadNBTData(NBTTagCompound nbt) {
         NBTTagCompound props = (NBTTagCompound) nbt.getTag(EXT_PROP_NAME);
-        hasData = props.getBoolean("hasData");
-        if (hasData) {
-            lastTeleportPosX = props.getInteger("lastTeleportPosX");
-            lastTeleportPosZ = props.getInteger("lastTeleportPosZ");
-            lastTeleportVectorX = props.getInteger("lastTeleportVectorX");
-            lastTeleportVectorZ = props.getInteger("lastTeleportVectorZ");
-            lastTeleportSegmentLength = props.getInteger("lastTeleportSegmentLength");
-            lastTeleportSegmentPassed = props.getInteger("lastTeleportSegmentPassed");
-            prevTeleportPosX = intArrayToIntegerList(props.getIntArray("prevTeleportPosX"));
-            prevTeleportPosZ = intArrayToIntegerList(props.getIntArray("prevTeleportPosZ"));
-            isDematerialized = props.getBoolean("isDematerialized");
+        if (props != null) {
+            if (props.hasKey("hasData")) {
+                hasData = props.getBoolean("hasData");
+                if (hasData) {
+                    lastTeleportPosX = props.getInteger("lastTeleportPosX");
+                    lastTeleportPosZ = props.getInteger("lastTeleportPosZ");
+                    lastTeleportVectorX = props.getInteger("lastTeleportVectorX");
+                    lastTeleportVectorZ = props.getInteger("lastTeleportVectorZ");
+                    lastTeleportSegmentLength = props.getInteger("lastTeleportSegmentLength");
+                    lastTeleportSegmentPassed = props.getInteger("lastTeleportSegmentPassed");
+                    prevTeleportPosX = intArrayToIntegerList(props.getIntArray("prevTeleportPosX"));
+                    prevTeleportPosZ = intArrayToIntegerList(props.getIntArray("prevTeleportPosZ"));
+                    isDematerialized = props.getBoolean("isDematerialized");
+                }
+            }
         }
     }
 
