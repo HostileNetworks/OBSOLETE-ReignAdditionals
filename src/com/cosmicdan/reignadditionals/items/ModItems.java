@@ -12,6 +12,7 @@ public class ModItems {
     public static Item TREESAP;
     public static Item TELEPORTER;
     public static Item MATERIALIZER;
+    public static Item MILK_BOTTLE;
     
     public static final void init() {
         FLINT_HANDAXE = new ItemFlintAxe(FLINT, "flintHandaxe");
@@ -22,5 +23,7 @@ public class ModItems {
         GameRegistry.registerItem(TELEPORTER, "teleporter");
         MATERIALIZER = new ItemMaterializer("materializer");
         GameRegistry.registerItem(MATERIALIZER, "materializer");
+        MILK_BOTTLE = new ItemMilkBottle("milkBottle");
+        GameRegistry.registerItem(MILK_BOTTLE, "milkBottle");
     }
 }

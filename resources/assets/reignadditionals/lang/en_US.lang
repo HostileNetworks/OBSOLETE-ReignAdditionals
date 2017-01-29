@@ -7,6 +7,8 @@ item.teleporter.tooltip.more=Using this will dematerialize and teleport you to t
 item.materializer.name=Materializer
 item.materializer.tooltip=Hold Shift to read details
 item.materializer.tooltip.more=Use this to rematerialize. This item and the teleport stone will be destroyed, you will no longer be immortal, and you will be able to interact with the world again.
+item.milkBottle.name=Milk Bottle
+item.milkBottle.tooltip=Made with all natural 100% liquid!
 
 tile.campfire.name=Campfire
 tile.campfire.tooltip=Primitive food cooking. Light by right-clicking with flint. Add fuel by right-clicking with stick. Add raw food by right-clicking with it. Remove cooked food by right-click with hand (or anything if full).
