@@ -176,7 +176,8 @@ public class GuiTextOverlay {
                 GL11.glPushMatrix();
                 
                 // build the moon string
-                if ((daysUntilFullMoon == ModConfig.daysPerMonth) && (currentDay > 1))
+                if ((daysUntilFullMoon == ModConfig.daysPerMonth) && (currentDay > 1) && (currentYear > ModConfig.STARTING_YEAR))
+                    // only show "today" if it isn't the very first day (first fullmoon) - we're assuming that ESM is set to have a cooldown
                     text = "TODAY";
                 else
                     text = "in " + daysUntilFullMoon + (daysUntilFullMoon == 1 ? " day" : " days");
