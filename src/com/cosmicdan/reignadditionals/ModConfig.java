@@ -12,6 +12,7 @@ public class ModConfig {
     public static boolean MIXING_ENABLED_COBBLE = false;
     public static boolean MIXING_ENABLED_SMOOTHSTONE = false;
     public static boolean ALLOW_BREAKING_WITHOUT_TOOL = false;
+    public static int REIGN_IDLE_TARGET_DESPAWN_SECS = 30;
     
     public static int DAYS_PER_MOON_PHASE = 6;
     public static int STARTING_YEAR = 1000;
@@ -70,6 +71,11 @@ public class ModConfig {
         Property ALLOW_BREAKING_WITHOUT_TOOL_PROP = CONFIG.get("removals", "enabledBreakingBlocksWithoutTool", ALLOW_BREAKING_WITHOUT_TOOL);
         ALLOW_BREAKING_WITHOUT_TOOL_PROP.comment = "Allow breaking some blocks (stone, wood) without their right tool class (pickaxe, axe)?";
         
+        Property REIGN_IDLE_TARGET_DESPAWN_TICKS_PROP = CONFIG.get("changes", "idleTargetDespawnSeconds", REIGN_IDLE_TARGET_DESPAWN_SECS);
+        REIGN_IDLE_TARGET_DESPAWN_TICKS_PROP.comment = "If one of the Entities listed has had no target for this many seconds, it will instantly despawn. \n"
+                                        + "Designed to work with ESM's xray mode. Note that this is VERY lazy. Applies to the following entities:\n"
+                                        + "EntityZombie (only if they're holding an ItemBlock, their spawn item, or no item at all).";
+        
         
         // gui stuff
         CONFIG.addCustomCategoryComment("gui", "GUI settings are all client-side. Some should match the pack/server for lore or gameplay reasons, but they don't technically have to.");
@@ -121,6 +127,7 @@ public class ModConfig {
         MIXING_ENABLED_COBBLE = MIXING_ENABLED_COBBLE_PROP.getBoolean(MIXING_ENABLED_COBBLE);
         MIXING_ENABLED_SMOOTHSTONE = MIXING_ENABLED_SMOOTHSTONE_PROP.getBoolean(MIXING_ENABLED_SMOOTHSTONE);
         ALLOW_BREAKING_WITHOUT_TOOL = ALLOW_BREAKING_WITHOUT_TOOL_PROP.getBoolean(ALLOW_BREAKING_WITHOUT_TOOL);
+        REIGN_IDLE_TARGET_DESPAWN_SECS = REIGN_IDLE_TARGET_DESPAWN_TICKS_PROP.getInt(REIGN_IDLE_TARGET_DESPAWN_SECS);
         
         DAYS_PER_MOON_PHASE = DAYS_PER_MOON_PHASE_PROP.getInt(DAYS_PER_MOON_PHASE);
         STARTING_YEAR = STARTING_YEAR_PROP.getInt(STARTING_YEAR);
