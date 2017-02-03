@@ -31,6 +31,12 @@ public class ItemFlintAxe extends ItemAxe {
         this.setTextureName(Main.MODID + ":" + unlocalizedName);
     }
     
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
+        ModItems.getTooltip(getUnlocalizedName(), tooltip);
+    }
+    
     public boolean onItemUse(ItemStack itemStack, EntityPlayer entityPlayer, World world, int posX, int posY, int posZ, int side, float hitX, float hitY, float hitZ) {
         Block targetBlock = world.getBlock(posX, posY, posZ);
         if (targetBlock instanceof IShearable) {
@@ -60,14 +66,5 @@ public class ItemFlintAxe extends ItemAxe {
             }
         }
         return false;
-    }
-    
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
-        String tooltipText = LanguageRegistry.instance().getStringLocalization("item." + unlocalizedName + ".tooltip");
-        for (String line : TextUtils.splitTextString(tooltipText, 32)) {
-            tooltip.add(line);
-        }
     }
 }

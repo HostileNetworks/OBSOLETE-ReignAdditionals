@@ -33,6 +33,12 @@ public class ItemTeleporter extends Item {
         this.setTextureName(Main.MODID + ":" + unlocalizedName);
     }
     
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
+        ModItems.getTooltip(getUnlocalizedName(), tooltip);
+    }
+    
     @Override
     public ItemStack onItemRightClick(final ItemStack itemStack, final World world, final EntityPlayer entityPlayer) {
         if (world.isRemote)
@@ -237,19 +243,6 @@ public class ItemTeleporter extends Item {
         thread.start();
         
         return itemStack;
-    }
-    
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
-        String tooltipText;
-        if (GuiScreen.isShiftKeyDown())
-            tooltipText = LanguageRegistry.instance().getStringLocalization("item." + unlocalizedName + ".tooltip.more");
-        else
-            tooltipText = LanguageRegistry.instance().getStringLocalization("item." + unlocalizedName + ".tooltip");
-        for (String line : TextUtils.splitTextString(tooltipText, 32)) {
-            tooltip.add(line);
-        }
     }
     
     private synchronized boolean isBiomeTypeAtPos(final World world, final int posX, final int posZ, final BiomeDictionary.Type biomeTypeSearch) {

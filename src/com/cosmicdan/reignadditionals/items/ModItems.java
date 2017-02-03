@@ -1,6 +1,12 @@
 package com.cosmicdan.reignadditionals.items;
 
+import java.util.List;
+
+import com.cosmicdan.reignadditionals.util.TextUtils;
+
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
 import net.minecraftforge.common.util.EnumHelper;
@@ -25,5 +31,24 @@ public class ModItems {
         GameRegistry.registerItem(MATERIALIZER, "materializer");
         MILK_BOTTLE = new ItemMilkBottle("milkBottle");
         GameRegistry.registerItem(MILK_BOTTLE, "milkBottle");
+    }
+    
+    public static final void getTooltip(String unlocalizedName, List tooltip) {
+        String tooltipText;
+        tooltipText = LanguageRegistry.instance().getStringLocalization(unlocalizedName + ".tooltip.more");
+        if (!tooltipText.isEmpty()) {
+            if (!GuiScreen.isShiftKeyDown()) {
+                tooltipText = LanguageRegistry.instance().getStringLocalization("tooltip.more");
+            }
+        } else {
+            tooltipText = LanguageRegistry.instance().getStringLocalization(unlocalizedName + ".tooltip");
+        }
+        
+        if (tooltipText != null) {
+            for (String line : TextUtils.splitTextString(tooltipText, 32)) {
+                tooltip.add(line);
+            }
+        }
+        
     }
 }

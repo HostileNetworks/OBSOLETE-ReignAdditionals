@@ -21,13 +21,10 @@ public class ItemCampfire extends ItemBlock {
         this.unlocalizedName = parentBlock.getUnlocalizedName().replace("tile.", "");
         this.setUnlocalizedName(unlocalizedName);
     }
-
+    
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
-        String tooltipText = LanguageRegistry.instance().getStringLocalization("tile." + unlocalizedName + ".tooltip");
-        for (String line : TextUtils.splitTextString(tooltipText, 32)) {
-            tooltip.add(line);
-        }
+        ModItems.getTooltip(getUnlocalizedName(), tooltip);
     }
 }

@@ -24,6 +24,12 @@ public class ItemMaterializer extends Item {
         this.setTextureName(Main.MODID + ":" + unlocalizedName);
     }
     
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
+        ModItems.getTooltip(getUnlocalizedName(), tooltip);
+    }
+    
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer entityPlayer) {
         if (world.isRemote)
@@ -52,19 +58,4 @@ public class ItemMaterializer extends Item {
         
         return itemStack;
     }
-    
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
-        String tooltipText;
-        if (GuiScreen.isShiftKeyDown())
-            tooltipText = LanguageRegistry.instance().getStringLocalization("item." + unlocalizedName + ".tooltip.more");
-        else
-            tooltipText = LanguageRegistry.instance().getStringLocalization("item." + unlocalizedName + ".tooltip");
-        for (String line : TextUtils.splitTextString(tooltipText, 32)) {
-            tooltip.add(line);
-        }
-    }
-    
-    
 }

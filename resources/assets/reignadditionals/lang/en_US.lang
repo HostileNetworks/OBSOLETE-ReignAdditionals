@@ -1,19 +1,21 @@
+tooltip.more=§eHold SHIFT for more info§r
+
 item.flintHandaxe.name=Flint Handaxe
-item.flintHandaxe.tooltip=Can chop trees (though not very well) and also shear blocks with right-click (half the time). Careful - even if the shear is unsuccessful, the block will still be destroyed!
+item.flintHandaxe.tooltip.more=Can chop trees (though not very well) and also shear blocks with right-click (half the time). Careful - even if the shear is unsuccessful, the block will still be destroyed!
 item.treeSap.name=Tree Sap
 item.teleporter.name=Teleport Stone
-item.teleporter.tooltip=Hold Shift to read details
 item.teleporter.tooltip.more=Using this will dematerialize and teleport you to the nearest ideal spawn location. Using again will teleport to the next ideal location, progressing in an outwards spiral from the original location you used it. Use the 'Materializer' item once you've found somewhere ideal.
 item.materializer.name=Materializer
-item.materializer.tooltip=Hold Shift to read details
 item.materializer.tooltip.more=Use this to rematerialize. This item and the teleport stone will be destroyed, you will no longer be immortal, and you will be able to interact with the world again.
 item.milkBottle.name=Milk Bottle
 item.milkBottle.tooltip=Made with all natural 100% liquid!
+item.debugThingy.name=CosmicDan's Sooper-Dooper Debug Thingy
+item.debugThingy.tooltip.more=Creative-only tool created to help debugging and developing the Reign Modpack.\n\nRight-click a non-player entity: Dump a bunch of info about the entity to the console.
 
 tile.campfire.name=Campfire
-tile.campfire.tooltip=Primitive food cooking. Light by right-clicking with flint. Add fuel by right-clicking with stick. Add raw food by right-clicking with it. Remove cooked food by right-click with hand (or anything if full).
+tile.campfire.tooltip.more=Primitive food cooking. Light by right-clicking with flint. Add fuel by right-clicking with stick. Add raw food by right-clicking with it. Remove cooked food by right-click with hand (or anything if full).
 tile.campfireLit.name=Campfire
-tile.campfireLit.tooltip=Refer to the other Campfire's tooltip.
+tile.campfireLit.tooltip=Lit campfire block. Refer to the other Campfire block tooltip.
 
 waila.campfirelit.body=minutes of fuel remaining
 

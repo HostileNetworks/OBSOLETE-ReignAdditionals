@@ -42,10 +42,6 @@ public class ItemMilkBottle extends ItemBucketMilk {
     @SideOnly(Side.CLIENT)
     @Override
     public void addInformation(ItemStack itemStack, EntityPlayer entityPlayer, List tooltip, boolean bool) {
-        String tooltipText;
-        tooltipText = LanguageRegistry.instance().getStringLocalization("item." + unlocalizedName + ".tooltip");
-        for (String line : TextUtils.splitTextString(tooltipText, 32)) {
-            tooltip.add(line);
-        }
+        ModItems.getTooltip(getUnlocalizedName(), tooltip);
     }
 }
