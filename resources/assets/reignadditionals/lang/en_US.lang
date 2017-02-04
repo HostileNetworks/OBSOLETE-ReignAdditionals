@@ -10,7 +10,7 @@ item.materializer.tooltip.more=Use this to rematerialize. This item and the tele
 item.milkBottle.name=Milk Bottle
 item.milkBottle.tooltip=Made with all natural 100% liquid!
 item.debugThingy.name=CosmicDan's Sooper-Dooper Debug Thingy
-item.debugThingy.tooltip.more=Creative-only tool created to help debugging and developing the Reign Modpack.\n\nRight-click a non-player entity: Dump a bunch of info about the entity to the console.
+item.debugThingy.tooltip.more=Creative-only debug tool created to help debugging and developing the Reign Modpack. ----------------------------- Right-click a non-player entity: Dump a bunch of info about the entity to the console.
 
 tile.campfire.name=Campfire
 tile.campfire.tooltip.more=Primitive food cooking. Light by right-clicking with flint. Add fuel by right-clicking with stick. Add raw food by right-clicking with it. Remove cooked food by right-click with hand (or anything if full).

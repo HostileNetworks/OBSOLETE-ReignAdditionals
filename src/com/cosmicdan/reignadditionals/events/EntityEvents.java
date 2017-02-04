@@ -7,6 +7,7 @@ import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +30,11 @@ public class EntityEvents {
             PlayerTeleporterTracker teleporterProps = PlayerTeleporterTracker.get((EntityPlayer)event.entity);
             if (teleporterProps.isDematerialized()) {
                 ((EntityPlayer)event.entity).addPotionEffect(new PotionEffect(Potion.invisibility.getId(), Integer.MAX_VALUE, 0));
+            }
+        }
+        if (event.entity instanceof EntityLiving) {
+            if (!event.entity.getEntityData().hasKey("ORIGINAL_SPAWN_POS")) {
+                event.entity.getEntityData().setIntArray("ORIGINAL_SPAWN_POS", new int[] {(int) event.entity.posX, (int) event.entity.posY, (int) event.entity.posZ});
             }
         }
     }
