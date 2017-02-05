@@ -48,6 +48,7 @@ public class ItemDebugThingy extends Item {
                 Main.LOGGER.info("Instance of EntityLiving? " + isEntityLiving);
                 if (isEntityLiving) {
                     EntityLiving entity = (EntityLiving) rayTraceEntity.entityHit;
+                    Main.LOGGER.info("    EntityLiving navigator class: " + entity.getNavigator().getClass().getCanonicalName());
                     int[] spawnPos = null;
                     if (entity.getEntityData().hasKey("ORIGINAL_SPAWN_POS")) {
                         spawnPos = entity.getEntityData().getIntArray("ORIGINAL_SPAWN_POS");
@@ -66,6 +67,12 @@ public class ItemDebugThingy extends Item {
                     boolean hasTargetTasks = entity.targetTasks != null;
                     Main.LOGGER.info("    EntityLiving has target tasks? " + hasTargetTasks);
                     if (hasTargetTasks) {
+                        Main.LOGGER.info("        EntityLiving list of AI tasks [priority // class]: ");
+                        for (Object task : entity.targetTasks.taskEntries) {
+                            if (task instanceof EntityAITasks.EntityAITaskEntry) {
+                                Main.LOGGER.info("            " + ((EntityAITasks.EntityAITaskEntry)task).priority + " // " + ((EntityAITasks.EntityAITaskEntry)task).action.getClass().getCanonicalName()); 
+                            }
+                        }
                         EntityLivingBase currentTarget = entity.getAITarget();
                         Main.LOGGER.info("        Current target: " + currentTarget);
                         if (currentTarget != null) {
