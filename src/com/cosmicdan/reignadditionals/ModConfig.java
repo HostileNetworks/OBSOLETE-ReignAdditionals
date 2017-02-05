@@ -26,6 +26,7 @@ public class ModConfig {
     public static int TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = 50;
     public static int TELEPORT_CLAIMEDCHUNK_BUFFER = 30;
     public static String TELEPORT_MESSAGE = "Teleporting...";
+    public static int TELEPORT_SEGMENT_INCREMENT = 5;
     
     
     public static String CONFIG_PATH;
@@ -116,6 +117,9 @@ public class ModConfig {
         Property TELEPORT_CLAIMEDCHUNK_BUFFER_PROP = CONFIG.get("teleporter", "teleportClaimedChunkBuffer", TELEPORT_CLAIMEDCHUNK_BUFFER);
         TELEPORT_CLAIMEDCHUNK_BUFFER_PROP.comment = "Minimim space/distance in chunks (i.e. a radius) to teleport the player from chunks that are already claimed by non-team players";
         
+        Property TELEPORT_SEGMENT_INCREMENT_PROP = CONFIG.get("teleporter", "teleportSegmen Increment", TELEPORT_SEGMENT_INCREMENT);
+        TELEPORT_SEGMENT_INCREMENT_PROP.comment = "The teleport searches in an outward spiral from origin, increasing each segement length (edge) every 2 'corners'. This value determines how much to increment the segment length every second corner. A value of 1 will be the tightest spiral, checking every block (which is not necessary and just harms performance). Don't set too high if you want to make use of all available space though.";
+        
         
         // save config if it differs to the default values
         if(CONFIG.hasChanged())
@@ -140,6 +144,8 @@ public class ModConfig {
         TELEPORT_SEARCH_WATERBIOME_RADIUS = TELEPORT_SEARCH_WATERBIOME_RADIUS_PROP.getInt(TELEPORT_SEARCH_WATERBIOME_RADIUS);
         TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN_PROP.getInt(TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN);
         TELEPORT_MESSAGE = TELEPORT_MESSAGE_PROP.getString();
+        TELEPORT_CLAIMEDCHUNK_BUFFER = TELEPORT_CLAIMEDCHUNK_BUFFER_PROP.getInt(TELEPORT_CLAIMEDCHUNK_BUFFER);
+        TELEPORT_SEGMENT_INCREMENT = TELEPORT_SEGMENT_INCREMENT_PROP.getInt(TELEPORT_SEGMENT_INCREMENT);
         
         // reset some initial config-based values
         daysPerMonth = ModConfig.DAYS_PER_MOON_PHASE * 8;

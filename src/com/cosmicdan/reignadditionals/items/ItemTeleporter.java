@@ -115,6 +115,7 @@ public class ItemTeleporter extends Item {
                         int chunkScanSegmentLengthMax = ModConfig.TELEPORT_CLAIMEDCHUNK_BUFFER * 2 + 1; // 30 is the "radius", offload to config
                         
                         while (true) {
+                            // search for nearby existing chunk claims
                             List<TownHallOwner> claimStakes = InteropFtbuChunkData.INSTANCE.chunkClaims.get(new InteropFtbuChunkData.ChunkLocation(chunkX, chunkZ, world.provider.dimensionId));
                             if (claimStakes != null) {
                                 ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(claimStakes.get(0).getOwnerName());
@@ -228,7 +229,7 @@ public class ItemTeleporter extends Item {
                         
                         // bump the segment length if necessary (every second turn)
                         if (vectorZ == 0)
-                            segmentLength++;
+                            segmentLength += ModConfig.TELEPORT_SEGMENT_INCREMENT;
                     }
                     //try {
                     //    Thread.sleep(1);
