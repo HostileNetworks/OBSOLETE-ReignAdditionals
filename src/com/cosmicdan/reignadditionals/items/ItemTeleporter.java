@@ -23,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.BiomeDictionary;
 import net.shadowmage.ancientwarfare.core.interop.InteropFtbuChunkData;
 import net.shadowmage.ancientwarfare.core.interop.InteropFtbuChunkData.TownHallOwner;
+import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
 
 public class ItemTeleporter extends Item {
     private String unlocalizedName;
@@ -116,7 +117,7 @@ public class ItemTeleporter extends Item {
                         
                         while (true) {
                             // search for nearby existing chunk claims
-                            List<TownHallOwner> claimStakes = InteropFtbuChunkData.INSTANCE.chunkClaims.get(new InteropFtbuChunkData.ChunkLocation(chunkX, chunkZ, world.provider.dimensionId));
+                            List<TownHallOwner> claimStakes = InteropFtbuChunkData.get(world).chunkClaimsGet(new InteropFtbuChunkData.ChunkLocation(chunkX, chunkZ, world.provider.dimensionId));
                             if (claimStakes != null) {
                                 ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(claimStakes.get(0).getOwnerName());
                                 if (claimTeam == null || entityPlayer.getTeam() == null || !claimTeam.isSameTeam(entityPlayer.getTeam())) {
@@ -124,6 +125,15 @@ public class ItemTeleporter extends Item {
                                     isTooClose = true;
                                     break;
                                 }
+                            }
+                            // also search to see if there's a headquarters in this chunk (in case they're neglected/abandoned)
+                            for (int[] playerHqEntry : HeadquartersTracker.get(world).playerHeadquarters.values()) {
+                                int chunkPos[] = new int[] {playerHqEntry[0] / 16, playerHqEntry[2] / 16};
+                                if (chunkX == chunkPos[0] && chunkZ == chunkPos[1]) {
+                                    isTooClose = true;
+                                    break;
+                                }
+                                    
                             }
                             // step forward
                             chunkX += chunkScanVectorX;
