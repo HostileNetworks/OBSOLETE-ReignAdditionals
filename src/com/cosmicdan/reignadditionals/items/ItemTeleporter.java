@@ -2,6 +2,7 @@ package com.cosmicdan.reignadditionals.items;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.ModConfig;
@@ -21,8 +22,10 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.BiomeDictionary;
+import net.shadowmage.ancientwarfare.core.interop.InteropFtbu;
 import net.shadowmage.ancientwarfare.core.interop.InteropFtbuChunkData;
 import net.shadowmage.ancientwarfare.core.interop.InteropFtbuChunkData.TownHallOwner;
+import net.shadowmage.ancientwarfare.core.interop.ModAccessors;
 import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
 
 public class ItemTeleporter extends Item {
@@ -121,17 +124,24 @@ public class ItemTeleporter extends Item {
                             if (claimStakes != null) {
                                 ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(claimStakes.get(0).getOwnerName());
                                 if (claimTeam == null || entityPlayer.getTeam() == null || !claimTeam.isSameTeam(entityPlayer.getTeam())) {
-                                    //System.out.println("Found a non-allied claim at chunk " + chunkX + "x" + chunkZ);
-                                    isTooClose = true;
-                                    break;
+                                    if (!ModAccessors.FTBU.areFriends(claimStakes.get(0).getOwnerName(), entityPlayer.getCommandSenderName())) {
+                                        isTooClose = true;
+                                        break;
+                                    }
                                 }
                             }
                             // also search to see if there's a headquarters in this chunk (in case they're neglected/abandoned)
-                            for (int[] playerHqEntry : HeadquartersTracker.get(world).playerHeadquarters.values()) {
-                                int chunkPos[] = new int[] {playerHqEntry[0] / 16, playerHqEntry[2] / 16};
+                            for (Map.Entry<String,int[]> playerHqEntry : HeadquartersTracker.get(world).playerHeadquarters.entrySet()) {
+                                int chunkPos[] = new int[] {playerHqEntry.getValue()[0] / 16, playerHqEntry.getValue()[2] / 16};
                                 if (chunkX == chunkPos[0] && chunkZ == chunkPos[1]) {
-                                    isTooClose = true;
-                                    break;
+                                    ScorePlayerTeam hqTeam = world.getScoreboard().getPlayersTeam(playerHqEntry.getKey());
+                                    if (hqTeam == null || entityPlayer.getTeam() == null || !hqTeam.isSameTeam(entityPlayer.getTeam())) {
+                                        if (!ModAccessors.FTBU.areFriends(playerHqEntry.getKey(), entityPlayer.getCommandSenderName())) {
+                                            isTooClose = true;
+                                            break;
+                                        }
+                                    }
+                                    
                                 }
                                     
                             }
