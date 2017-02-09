@@ -26,7 +26,7 @@ public class ModConfig {
     public static int TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = 50;
     public static int TELEPORT_CLAIMEDCHUNK_BUFFER = 100;
     public static String TELEPORT_MESSAGE = "Teleporting...";
-    public static int TELEPORT_SEGMENT_INCREMENT = 5;
+    public static int TELEPORT_SEGMENT_INCREMENT = 3;
     
     
     public static String CONFIG_PATH;
@@ -117,7 +117,7 @@ public class ModConfig {
         Property TELEPORT_CLAIMEDCHUNK_BUFFER_PROP = CONFIG.get("teleporter", "teleportClaimedChunkBuffer", TELEPORT_CLAIMEDCHUNK_BUFFER);
         TELEPORT_CLAIMEDCHUNK_BUFFER_PROP.comment = "Minimim space/distance in chunks (i.e. a radius) to teleport the player from chunks that are already claimed by non-team players, OR that have a Headquarters";
         
-        Property TELEPORT_SEGMENT_INCREMENT_PROP = CONFIG.get("teleporter", "teleportSegmen Increment", TELEPORT_SEGMENT_INCREMENT);
+        Property TELEPORT_SEGMENT_INCREMENT_PROP = CONFIG.get("teleporter", "teleportSegmentIncrement", TELEPORT_SEGMENT_INCREMENT);
         TELEPORT_SEGMENT_INCREMENT_PROP.comment = "The teleport searches in an outward spiral from origin, increasing each segement length (edge) every 2 'corners'. This value determines how much to increment the segment length every second corner. A value of 1 will be the tightest spiral, checking every block (which is not necessary and just harms performance). Don't set too high if you want to make use of all available space though.";
         
         

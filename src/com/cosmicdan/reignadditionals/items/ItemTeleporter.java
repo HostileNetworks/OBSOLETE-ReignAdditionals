@@ -99,15 +99,23 @@ public class ItemTeleporter extends Item {
                         searchCooldown--;
                     
                     if (searchCooldown == 0 && isBiomeTypeAtPos(world, posX, posZ, BiomeDictionary.Type.PLAINS)) {
-                        
+                        //System.out.println("Cooldown reached! Checking if " + posX + "x" + posZ + " is far enough away...");
                         searchCooldown = ModConfig.TELEPORT_MIN_DISTANCE;
                         boolean isTooClose = false;
                         
                         // Make sure this new position is further than searchMinDistance to the last teleport position
                         for (int i = 0; i < prevPosX.size(); i++) {
-                            if (Math.hypot(posX-prevPosX.get(i), posZ-prevPosZ.get(i)) < ModConfig.TELEPORT_MIN_DISTANCE)
+                            if (Math.hypot(posX-prevPosX.get(i), posZ-prevPosZ.get(i)) < ModConfig.TELEPORT_MIN_DISTANCE) {
+                                //System.out.println("...nope! Try again next cool-down...");
                                 isTooClose = true;
+                                break;
+                            }
                         }
+                        
+                        if (isTooClose)
+                            continue;
+                        
+                        //System.out.println("...yep! Check if there is a non-friendly claim or HQ nearby...");
                         
                         // Make sure that there are no non-allied player claims nearby
                         int chunkScanVectorX = 1;
@@ -173,65 +181,70 @@ public class ItemTeleporter extends Item {
                             //} catch (InterruptedException e) {}
                         }
                         
-                        
-                        if (!isTooClose) {
-                            // do another spiral search from here for a beach/ocean/river biome 
-                            int innerVectorX = 1;
-                            int innerVectorZ = 0;
-                            int innerPosX = posX;
-                            int innerPosZ = posZ;
-                            int innerSegmentLength = 1;
-                            int innerSegmentPassed = 0;
-                            
-                            while (true) {
-                                if (isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.BEACH) || isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.OCEAN) || isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.RIVER)) {
-                                    // verify that the candidate block has solid footing before confirming
-                                    if (!world.getBlock(posX, world.getTopSolidOrLiquidBlock(posX, posZ), posZ).getMaterial().isLiquid()) {
-                                        foundBiome = true;
-                                        break;
-                                    }
-                                }
-                                
-                                // take a step "forward"
-                                innerPosX += innerVectorX;
-                                innerPosZ += innerVectorZ;
-                                innerSegmentPassed++;
-                                if (innerSegmentPassed == innerSegmentLength) {
-                                    // segment done
-                                    innerSegmentPassed = 0;
-                                    
-                                    // rotate the vector
-                                    int tmp = innerVectorX;
-                                    innerVectorX = -innerVectorZ;
-                                    innerVectorZ = tmp;
-                                    
-                                    // bump the segment length if necessary (every second turn)
-                                    if (innerVectorZ == 0)
-                                        innerSegmentLength++;
-                                    
-                                    if (innerSegmentLength == innerSegmentLengthMax + 1) {
-                                        // no beach/ocean/river biome found within desired range
-                                        // set cooldown
-                                        searchCooldown = ModConfig.TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN;
-                                        break;
-                                    }
-                                }
-                                //try {
-                                //    Thread.sleep(1);
-                                //} catch (InterruptedException e) {}
-                            }
+                        if (isTooClose) {
+                            //System.out.println("...yep! Try again next cooldown!");
+                            continue;
                         }
-                    }
-                    
-                    if (foundBiome) {
-                        //System.out.println("...success! Found plains biome at " + posX + "x" + posZ + " which has a beach/ocean/river biome within a " + waterBiomeSearchRadius + " block radius.");
-                        entityPlayer.setPositionAndUpdate(posX + 0.5D, world.getTopSolidOrLiquidBlock(posX, posZ), posZ + 0.5D);
                         
-                        prevPosX.add(posX);
-                        prevPosZ.add(posZ);
-                        teleporterProps.setTeleportData(posX, posZ, vectorX, vectorZ, segmentLength, segmentPassed, prevPosX, prevPosZ);
-                        teleporterProps.setTeleporting(false);
-                        break;
+                        //System.out.println("Nope! Now, is a water-type biome nearby...?");
+                        
+                        // do another spiral search from here for a beach/ocean/river biome 
+                        int innerVectorX = 1;
+                        int innerVectorZ = 0;
+                        int innerPosX = posX;
+                        int innerPosZ = posZ;
+                        int innerSegmentLength = 1;
+                        int innerSegmentPassed = 0;
+                        
+                        while (true) {
+                            if (isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.BEACH) || isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.OCEAN) || isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.RIVER)) {
+                                // verify that the candidate block has solid footing before confirming
+                                if (!world.getBlock(posX, world.getTopSolidOrLiquidBlock(posX, posZ), posZ).getMaterial().isLiquid()) {
+                                    foundBiome = true;
+                                    break;
+                                }
+                            }
+                            
+                            // take a step "forward"
+                            innerPosX += innerVectorX;
+                            innerPosZ += innerVectorZ;
+                            innerSegmentPassed++;
+                            if (innerSegmentPassed == innerSegmentLength) {
+                                // segment done
+                                innerSegmentPassed = 0;
+                                
+                                // rotate the vector
+                                int tmp = innerVectorX;
+                                innerVectorX = -innerVectorZ;
+                                innerVectorZ = tmp;
+                                
+                                // bump the segment length if necessary (every second turn)
+                                if (innerVectorZ == 0)
+                                    innerSegmentLength++;
+                                
+                                if (innerSegmentLength == innerSegmentLengthMax + 1) {
+                                    // no beach/ocean/river biome found within desired range
+                                    // set cooldown
+                                    searchCooldown = ModConfig.TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN;
+                                    break;
+                                }
+                            }
+                            //try {
+                            //    Thread.sleep(1);
+                            //} catch (InterruptedException e) {}
+                        }
+                        
+                        if (foundBiome) {
+                            //System.out.println("...success! Found plains biome at " + posX + "x" + posZ + " which has a beach/ocean/river biome within a " + innerSegmentLengthMax + " block radius.");
+                            entityPlayer.setPositionAndUpdate(posX + 0.5D, world.getTopSolidOrLiquidBlock(posX, posZ), posZ + 0.5D);
+                            
+                            prevPosX.add(posX);
+                            prevPosZ.add(posZ);
+                            teleporterProps.setTeleportData(posX, posZ, vectorX, vectorZ, segmentLength, segmentPassed, prevPosX, prevPosZ);
+                            teleporterProps.setTeleporting(false);
+                            break;
+                        }
+                        //System.out.println("...nope! Try again next cooldown!");
                     }
                     
                     // take a step "forward"
@@ -255,9 +268,6 @@ public class ItemTeleporter extends Item {
                     //    Thread.sleep(1);
                     //} catch (InterruptedException e) {}
                 }
-                
-                
-                
             }
         };
 
