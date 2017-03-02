@@ -84,7 +84,6 @@ public class ItemTeleporter extends Item {
                     prevPosZ = teleporterProps.getPrevPosZ();
                 }
                 
-                entityPlayer.addPotionEffect(new PotionEffect(Potion.invisibility.getId(), Integer.MAX_VALUE, 0));
                 boolean foundBiome = false;
                 
                 int searchCooldown = ModConfig.TELEPORT_MIN_DISTANCE;
@@ -242,6 +241,8 @@ public class ItemTeleporter extends Item {
                             prevPosZ.add(posZ);
                             teleporterProps.setTeleportData(posX, posZ, vectorX, vectorZ, segmentLength, segmentPassed, prevPosX, prevPosZ);
                             teleporterProps.setTeleporting(false);
+                            
+                            entityPlayer.addPotionEffect(new PotionEffect(Potion.invisibility.getId(), Integer.MAX_VALUE, 0));
                             break;
                         }
                         //System.out.println("...nope! Try again next cooldown!");
