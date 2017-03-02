@@ -4,26 +4,21 @@ import com.cosmicdan.reignadditionals.ModConfig;
 import com.cosmicdan.reignadditionals.client.gui.GuiTextOverlay;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 
-import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn;
 
 public class EntityEvents {
+    
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         if (event.entity instanceof EntityPlayer) {
@@ -44,16 +39,6 @@ public class EntityEvents {
         }
     }
     
-    
-    @SubscribeEvent
-    public void onCheckSpawn(CheckSpawn event) {
-        if (event.entityLiving instanceof EntityAmbientCreature)
-            return;
-        
-        if (getSavedLightValue(event.world, (int)event.x, (int)event.y, (int)event.z) > 7) {
-            event.setResult(Result.DENY);
-        }
-    }
     
     
     @SubscribeEvent
@@ -96,27 +81,5 @@ public class EntityEvents {
                 }
             }
         }
-    }
-    
-    // cut-down version of the same world method, but returns 15 instead of 0 in the event that non-skylight light level could not be retrieved
-    private int getSavedLightValue(World world, int posX, int posY, int posZ) {
-        if (posY < 0)
-            posY = 0;
-
-        if (posY >= 256)
-            posY = 255;
-
-        if (posX >= -30000000 && posZ >= -30000000 && posX < 30000000 && posZ < 30000000) {
-            int chunkX = posX >> 4;
-            int chunkZ = posZ >> 4;
-
-            if (world.getChunkProvider().chunkExists(chunkX, chunkZ)) {
-                Chunk chunk = world.getChunkFromChunkCoords(chunkX, chunkZ);
-                //return chunk.getSavedLightValue(enumSkyBlock, p_72972_2_ & 15, p_72972_3_, p_72972_4_ & 15);
-                ExtendedBlockStorage extendedblockstorage = chunk.getBlockStorageArray()[posY >> 4];
-                return extendedblockstorage == null ? 15 : extendedblockstorage.getExtBlocklightValue(posX & 15, posY & 15, posZ & 15);
-            }
-        }
-        return 15;
     }
 }
