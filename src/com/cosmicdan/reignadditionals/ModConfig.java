@@ -23,10 +23,10 @@ public class ModConfig {
     
     public static int TELEPORT_MIN_DISTANCE = 300;
     public static int TELEPORT_SEARCH_WATERBIOME_RADIUS = 64;
-    public static int TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = 50;
+    public static int TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = 300;
     public static int TELEPORT_CLAIMEDCHUNK_BUFFER = 100;
     public static String TELEPORT_MESSAGE = "Teleporting...";
-    public static int TELEPORT_SEGMENT_INCREMENT = 3;
+    public static int TELEPORT_SEGMENT_INCREMENT = 4;
     
     
     public static String CONFIG_PATH;

@@ -1,6 +1,7 @@
 package com.cosmicdan.reignadditionals.items;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +23,9 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.BiomeDictionary;
+import net.shadowmage.ancientwarfare.core.gamedata.ChunkClaims;
+import net.shadowmage.ancientwarfare.core.gamedata.ChunkClaims.TownHallEntry;
 import net.shadowmage.ancientwarfare.core.interop.InteropFtbu;
-import net.shadowmage.ancientwarfare.core.interop.InteropFtbuChunkData;
-import net.shadowmage.ancientwarfare.core.interop.InteropFtbuChunkData.TownHallOwner;
 import net.shadowmage.ancientwarfare.core.interop.ModAccessors;
 import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
 
@@ -91,7 +92,6 @@ public class ItemTeleporter extends Item {
                 
                 //System.out.println("Starting search at " + posX + "x" + posZ);
                 
-                
                 while (true) {
                     // NB: On my imaginary grid, I consider "right" as X+ and "down" as Z+
                     if (searchCooldown > 0)
@@ -123,35 +123,23 @@ public class ItemTeleporter extends Item {
                         int chunkZ = posZ / 16;
                         int chunkScanSegmentLength = 1;
                         int chunkScanSegmentPassed = 0;
-                        int chunkScanSegmentLengthMax = ModConfig.TELEPORT_CLAIMEDCHUNK_BUFFER * 2 + 1; // 30 is the "radius", offload to config
+                        int chunkScanSegmentLengthMax = ModConfig.TELEPORT_CLAIMEDCHUNK_BUFFER * 2 + 1;
                         
                         while (true) {
                             // search for nearby existing chunk claims
-                            List<TownHallOwner> claimStakes = InteropFtbuChunkData.get(world).chunkClaimsGet(new InteropFtbuChunkData.ChunkLocation(chunkX, chunkZ, world.provider.dimensionId));
+                            LinkedHashSet<TownHallEntry> claimStakes = ChunkClaims.get(world).getClaimStakes(chunkX, chunkZ, world.provider.dimensionId);
+                            //List<TownHallOwner> claimStakes = InteropFtbuChunkData.get(world).chunkClaimsGet(new InteropFtbuChunkData.ChunkLocation(chunkX, chunkZ, world.provider.dimensionId));
                             if (claimStakes != null) {
-                                ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(claimStakes.get(0).getOwnerName());
+                                TownHallEntry firstEntry = claimStakes.iterator().next();
+                                ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(firstEntry.getOwnerName());
                                 if (claimTeam == null || entityPlayer.getTeam() == null || !claimTeam.isSameTeam(entityPlayer.getTeam())) {
-                                    if (!ModAccessors.FTBU.areFriends(claimStakes.get(0).getOwnerName(), entityPlayer.getCommandSenderName())) {
+                                    if (!ModAccessors.FTBU.areFriends(firstEntry.getOwnerName(), entityPlayer.getCommandSenderName())) {
                                         isTooClose = true;
                                         break;
                                     }
                                 }
                             }
-                            // also search to see if there's a headquarters in this chunk (in case they're neglected/abandoned)
-                            for (Map.Entry<String,int[]> playerHqEntry : HeadquartersTracker.get(world).playerHeadquarters.entrySet()) {
-                                int chunkPos[] = new int[] {playerHqEntry.getValue()[0] / 16, playerHqEntry.getValue()[2] / 16};
-                                if (chunkX == chunkPos[0] && chunkZ == chunkPos[1]) {
-                                    ScorePlayerTeam hqTeam = world.getScoreboard().getPlayersTeam(playerHqEntry.getKey());
-                                    if (hqTeam == null || entityPlayer.getTeam() == null || !hqTeam.isSameTeam(entityPlayer.getTeam())) {
-                                        if (!ModAccessors.FTBU.areFriends(playerHqEntry.getKey(), entityPlayer.getCommandSenderName())) {
-                                            isTooClose = true;
-                                            break;
-                                        }
-                                    }
-                                    
-                                }
-                                    
-                            }
+
                             // step forward
                             chunkX += chunkScanVectorX;
                             chunkZ += chunkScanVectorZ;
