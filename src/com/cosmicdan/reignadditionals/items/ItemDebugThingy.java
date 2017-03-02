@@ -43,6 +43,7 @@ public class ItemDebugThingy extends Item {
             if (rayTraceEntity.entityHit != null) {
                 Main.LOGGER.info("~~~~~~~ Hit an entity! Details:");
                 Main.LOGGER.info("Entity name: " + rayTraceEntity.entityHit.getCommandSenderName());
+                Main.LOGGER.info("Entity unique ID: " + rayTraceEntity.entityHit.getUniqueID());
                 Main.LOGGER.info("Entity class: " + rayTraceEntity.entityHit.getClass().getCanonicalName());
                 boolean isEntityLiving = rayTraceEntity.entityHit instanceof EntityLiving;
                 Main.LOGGER.info("Instance of EntityLiving? " + isEntityLiving);
