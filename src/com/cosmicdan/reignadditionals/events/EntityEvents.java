@@ -1,5 +1,10 @@
 package com.cosmicdan.reignadditionals.events;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+
 import com.cosmicdan.reignadditionals.ModConfig;
 import com.cosmicdan.reignadditionals.client.gui.GuiTextOverlay;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
@@ -13,9 +18,14 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.shadowmage.ancientwarfare.core.interop.ModAccessors;
+import openblocks.api.GraveSpawnEvent;
 
 public class EntityEvents {
     
@@ -39,7 +49,27 @@ public class EntityEvents {
         }
     }
     
-    
+    @SubscribeEvent
+    public void onGraveSpawn(GraveSpawnEvent event) {
+        if (event.hasLocation()) {
+            // show notification
+            String notificationTitle = "notification.graveplaced.title";
+            ChatComponentTranslation notificationMsg = new ChatComponentTranslation("notification.graveplaced.msg", event.getX(), event.getY(), event.getZ());
+            List<ChatComponentTranslation> notificationTooltip = new ArrayList<ChatComponentTranslation>();
+            notificationTooltip.add(new ChatComponentTranslation("notification.graveplaced.tooltip1"));
+            notificationTooltip.add(new ChatComponentTranslation("notification.graveplaced.tooltip2"));
+            notificationTooltip.add(new ChatComponentTranslation("notification.tooltip.close"));
+            ModAccessors.FTBU.notifyPlayer(EnumChatFormatting.AQUA, event.entityPlayer.getCommandSenderName(), notificationTitle, notificationMsg, notificationTooltip);
+            
+            String chatAndLogMessage = "Created grave for '" + event.entityPlayer.getCommandSenderName() + "' at " + event.getX() + "x" + event.getY() + "x" + event.getZ();
+            
+            // log to the base game logger
+            LogManager.getLogger().info(chatAndLogMessage);
+            
+            // and send to player chat
+            event.entityPlayer.addChatMessage(new ChatComponentText("§e" + chatAndLogMessage + "§r"));
+        }
+    }
     
     @SubscribeEvent
     public void onEntityConstructing(EntityConstructing event) {

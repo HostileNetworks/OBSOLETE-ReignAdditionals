@@ -20,3 +20,10 @@ tile.campfireLit.tooltip=Lit campfire block. Refer to the other Campfire block t
 waila.campfirelit.body=minutes of fuel remaining
 
 siegeevent.cantsleep.msg=I can't sleep now, I'm under siege!
+
+notification.graveplaced.title=Grave placed
+notification.graveplaced.msg=At %s x %s x %s
+notification.graveplaced.tooltip1=The grave contains your inventory - break
+notification.graveplaced.tooltip2=it and your items will spill into the world.
+
+notification.tooltip.close=Click to remove notification.
