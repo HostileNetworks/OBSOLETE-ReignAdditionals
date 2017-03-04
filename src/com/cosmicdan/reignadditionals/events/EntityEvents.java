@@ -24,6 +24,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.minecart.MinecartUpdateEvent;
 import net.shadowmage.ancientwarfare.core.interop.ModAccessors;
 import openblocks.api.GraveSpawnEvent;
 
@@ -85,8 +86,14 @@ public class EntityEvents {
     
     @SubscribeEvent
     public void onEntityLivingUpdate(LivingUpdateEvent event) {
+        if (!event.entity.worldObj.getChunkProvider().chunkExists(event.entity.chunkCoordX, event.entity.chunkCoordZ)) {
+            event.entity.setVelocity(0, 0, 0);
+            return;
+        }
+        
         if (event.entity.worldObj.isRemote)
             return;
+        
         if (++LIVING_UPDATE_COUNTER < LIVING_UPDATE_COUNTER_MAX)
             return;
         LIVING_UPDATE_COUNTER = 0;
@@ -110,6 +117,14 @@ public class EntityEvents {
                     event.entity.getEntityData().setInteger("REIGN_IDLE_TARGET_COUNTER", ++entityIdleTargetTimer);
                 }
             }
+        }
+    }
+    
+    @SubscribeEvent
+    public void onMinecartUpdate(MinecartUpdateEvent event) {
+        if (!event.entity.worldObj.getChunkProvider().chunkExists(event.entity.chunkCoordX, event.entity.chunkCoordZ)) {
+            event.entity.setVelocity(0, 0, 0);
+            return;
         }
     }
 }
