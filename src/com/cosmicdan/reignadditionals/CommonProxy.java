@@ -5,6 +5,7 @@ import com.cosmicdan.reignadditionals.blocks.tileentities.ModTileEntities;
 import com.cosmicdan.reignadditionals.events.BlockEvents;
 import com.cosmicdan.reignadditionals.events.EntityEvents;
 import com.cosmicdan.reignadditionals.events.PlayerEvents;
+import com.cosmicdan.reignadditionals.events.TerrainGenEvents;
 import com.cosmicdan.reignadditionals.interop.ImmersiveEngineeringAddons;
 import com.cosmicdan.reignadditionals.items.ModItems;
 
@@ -27,6 +28,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new BlockEvents());
         MinecraftForge.EVENT_BUS.register(new PlayerEvents());
         MinecraftForge.EVENT_BUS.register(new EntityEvents());
+        MinecraftForge.TERRAIN_GEN_BUS.register(new TerrainGenEvents());
         if ((Loader.isModLoaded("ImmersiveEngineering")) && Loader.isModLoaded("TConstruct")) {
             Main.LOGGER.info("Immersive Engineering and TConstruct detected. Adding Metal Presser Recipes for all Tinker's Construct things...");
             ImmersiveEngineeringAddons.load();
