@@ -27,9 +27,16 @@ public class CorePlugin implements IFMLLoadingPlugin {
     @Override
     public String getModContainerClass() {
         try {
-            // don't try and set window title on server 
+            // don't try and set window title on windows/bundled server 
             Sys.initialize();
         } catch (UnsatisfiedLinkError e) {
+            Main.IS_CLIENT = false;
+        }
+        
+        try {
+         // don't try and set window title on linux/dedicated server 
+            Class.forName("org.lwjgl.Sys");
+        } catch( ClassNotFoundException e ) {
             Main.IS_CLIENT = false;
         }
         
