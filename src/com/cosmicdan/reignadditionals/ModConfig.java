@@ -22,6 +22,7 @@ public class ModConfig {
     public static int FADE_INFOS_AT = 240;
     public static int FADE_OUT_TIME = 80;
     public static String YEAR_SUFFIX = "AGC";
+    public static String TITLE_SUFFIX = "ALPHA";
     
     public static int TELEPORT_MIN_DISTANCE = 300;
     public static int TELEPORT_SEARCH_WATERBIOME_RADIUS = 64;
@@ -104,6 +105,9 @@ public class ModConfig {
         Property YEAR_SUFFIX_PROP = CONFIG.get("gui", "yearSuffix", YEAR_SUFFIX);
         YEAR_SUFFIX_PROP.comment = "String to append at the end of the Year display. Purely cosmetic, default of AGC is a Reign Modpack lore thing (means 'After Great Cleansing').";
         
+        Property TITLE_SUFFIX_PROP = CONFIG.get("gui", "windowTitleSuffix", TITLE_SUFFIX);
+        TITLE_SUFFIX_PROP.comment = "String to append to the window title. It will appear as 'Minecraft - Reign Modpack <windowTitleSuffix>'";
+        
         
         // teleporter stuff
         CONFIG.addCustomCategoryComment("teleporter", "Settings related to the Teleporter Stone / Materializer starter items");
@@ -146,6 +150,7 @@ public class ModConfig {
         FADE_INFOS_AT = FADE_INFOS_AT_PROP.getInt(FADE_INFOS_AT);
         FADE_OUT_TIME = FADE_OUT_TIME_PROP.getInt(FADE_OUT_TIME);
         YEAR_SUFFIX = YEAR_SUFFIX_PROP.getString();
+        TITLE_SUFFIX = TITLE_SUFFIX_PROP.getString();
         
         TELEPORT_MIN_DISTANCE = TELEPORT_MIN_DISTANCE_PROP.getInt(TELEPORT_MIN_DISTANCE);
         TELEPORT_SEARCH_WATERBIOME_RADIUS = TELEPORT_SEARCH_WATERBIOME_RADIUS_PROP.getInt(TELEPORT_SEARCH_WATERBIOME_RADIUS);

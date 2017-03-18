@@ -2,6 +2,10 @@ package com.cosmicdan.reignadditionals.core;
 
 import java.util.Map;
 
+import org.lwjgl.Sys;
+import org.lwjgl.opengl.Display;
+
+import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.core.transformers.*;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
@@ -22,6 +26,35 @@ public class CorePlugin implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
+        try {
+            // don't try and set window title on server 
+            Sys.initialize();
+        } catch (UnsatisfiedLinkError e) {
+            Main.IS_CLIENT = false;
+        }
+        
+        if (Main.IS_CLIENT) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        if (!Display.getTitle().startsWith("Minecraft"))
+                            continue;
+                            
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        
+                        Display.setTitle("Minecraft: Reign Modpack");
+                        if (Display.getTitle().contains("Reign"))
+                            break;
+                    }
+                }
+            }).start();
+        }
+        
         // TODO Auto-generated method stub
         return null;
     }

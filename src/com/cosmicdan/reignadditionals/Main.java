@@ -2,12 +2,14 @@ package com.cosmicdan.reignadditionals;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.Display;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
@@ -23,6 +25,8 @@ public class Main {
     public static final String MODNAME = "ReignAdditionals";
     private static final String PROXY_CLIENT = "com.cosmicdan.reignadditionals.client.ClientProxy";
     private static final String PROXY_COMMON = "com.cosmicdan.reignadditionals.CommonProxy";
+    
+    public static boolean IS_CLIENT = true;
     
     @Instance(MODNAME)
     public static Main INSTANCE;
@@ -47,5 +51,12 @@ public class Main {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         PROXY.postInit(event);
+    }
+    
+    @EventHandler
+    public void loadComplete(FMLLoadCompleteEvent event) {
+        if (Main.IS_CLIENT) {
+            Display.setTitle("Minecraft: Reign Modpack " + ModConfig.TITLE_SUFFIX);
+        }
     }
 }
