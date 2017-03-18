@@ -27,39 +27,35 @@ public class CorePlugin implements IFMLLoadingPlugin {
     @Override
     public String getModContainerClass() {
         try {
-            // don't try and set window title on windows/bundled server 
-            Sys.initialize();
-        } catch (UnsatisfiedLinkError e) {
-            Main.IS_CLIENT = false;
-        }
-        
-        try {
-         // don't try and set window title on linux/dedicated server 
+            // don't try and set window title on linux/dedicated server 
             Class.forName("org.lwjgl.Sys");
+            try {
+                // don't try and set window title on windows/bundled server 
+                Sys.initialize();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            if (!Display.getTitle().startsWith("Minecraft"))
+                                continue;
+                                
+                            try {
+                                Thread.sleep(10);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            
+                            Display.setTitle("Minecraft: Reign Modpack");
+                            if (Display.getTitle().contains("Reign"))
+                                break;
+                        }
+                    }
+                }).start();
+            } catch (UnsatisfiedLinkError e) {
+                Main.IS_CLIENT = false;
+            }
         } catch( ClassNotFoundException e ) {
             Main.IS_CLIENT = false;
-        }
-        
-        if (Main.IS_CLIENT) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        if (!Display.getTitle().startsWith("Minecraft"))
-                            continue;
-                            
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        
-                        Display.setTitle("Minecraft: Reign Modpack");
-                        if (Display.getTitle().contains("Reign"))
-                            break;
-                    }
-                }
-            }).start();
         }
         
         // TODO Auto-generated method stub
