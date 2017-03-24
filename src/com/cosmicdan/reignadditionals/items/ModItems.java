@@ -20,11 +20,12 @@ public class ModItems {
     public static Item MATERIALIZER;
     public static Item MILK_BOTTLE;
     public static Item DEBUG_THINGY;
+    public static Item RAWRUBBER;
     
     public static final void init() {
         FLINT_HANDAXE = new ItemFlintAxe(FLINT, "flintHandaxe");
         GameRegistry.registerItem(FLINT_HANDAXE, "flintHandaxe");
-        TREESAP = new ItemTreeSap("treeSap");
+        TREESAP = new ItemBasic("treeSap");
         GameRegistry.registerItem(TREESAP, "treeSap");
         TELEPORTER = new ItemTeleporter("teleporter");
         GameRegistry.registerItem(TELEPORTER, "teleporter");
@@ -34,6 +35,8 @@ public class ModItems {
         GameRegistry.registerItem(MILK_BOTTLE, "milkBottle");
         DEBUG_THINGY = new ItemDebugThingy("debugThingy");
         GameRegistry.registerItem(DEBUG_THINGY, "debugThingy");
+        RAWRUBBER = new ItemBasic("rawRubber");
+        GameRegistry.registerItem(RAWRUBBER, "rawRubber");
     }
     
     public static final void getTooltip(String unlocalizedName, List tooltip) {
