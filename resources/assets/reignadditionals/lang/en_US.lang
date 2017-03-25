@@ -4,6 +4,7 @@ item.flintHandaxe.name=Flint Handaxe
 item.flintHandaxe.tooltip.more=Can chop trees (though not very well) and also shear blocks with right-click (half the time). Careful - even if the shear is unsuccessful, the block will still be destroyed!
 item.treeSap.name=Tree Sap
 item.rawRubber.name=Rubber
+item.saltClump.name=Salt Clump
 item.teleporter.name=Teleport Stone
 item.teleporter.tooltip.more=Using this will dematerialize and teleport you to the nearest ideal spawn location. Using again will teleport to the next ideal location, progressing in an outwards spiral from the original location you used it. Use the 'Materializer' item once you've found somewhere ideal.
 item.materializer.name=Materializer

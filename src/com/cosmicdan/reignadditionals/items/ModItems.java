@@ -21,6 +21,7 @@ public class ModItems {
     public static Item MILK_BOTTLE;
     public static Item DEBUG_THINGY;
     public static Item RAWRUBBER;
+    public static Item SALTCLUMP;
     
     public static final void init() {
         FLINT_HANDAXE = new ItemFlintAxe(FLINT, "flintHandaxe");
@@ -37,6 +38,8 @@ public class ModItems {
         GameRegistry.registerItem(DEBUG_THINGY, "debugThingy");
         RAWRUBBER = new ItemBasic("rawRubber");
         GameRegistry.registerItem(RAWRUBBER, "rawRubber");
+        SALTCLUMP = new ItemBasic("saltClump");
+        GameRegistry.registerItem(SALTCLUMP, "saltClump");
     }
     
     public static final void getTooltip(String unlocalizedName, List tooltip) {
