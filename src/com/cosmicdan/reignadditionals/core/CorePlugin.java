@@ -9,18 +9,24 @@ import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.core.transformers.*;
 
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraft.launchwrapper.Launch;
 
 @IFMLLoadingPlugin.Name(value = "ReignAdditionalsCore")
 @IFMLLoadingPlugin.MCVersion(value = "1.7.10")
 @IFMLLoadingPlugin.TransformerExclusions(value = "com.cosmicdan.reignadditionals.")
 @IFMLLoadingPlugin.SortingIndex(value = 1001) // How early your core mod is called - Use > 1000 to work with srg names
 public class CorePlugin implements IFMLLoadingPlugin {
+    public static boolean isDevEnv() {
+        return (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+    }
+    
     @Override
     public String[] getASMTransformerClass() {
         return new String[]{
           TransformBlockLiquid.class.getName(),
           TransformBlockLiquid2.class.getName(),
-          TransformBlockDynamicLiquid.class.getName()
+          TransformBlockDynamicLiquid.class.getName(),
+          TransformBlockFire.class.getName()
         };
     }
 

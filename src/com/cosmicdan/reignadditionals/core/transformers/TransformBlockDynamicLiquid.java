@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import com.cosmicdan.reignadditionals.asmhelper.ASMHelper;
+import com.cosmicdan.reignadditionals.core.CorePlugin;
 
 public class TransformBlockDynamicLiquid extends AbstractInjectJumpTransformer {
 
@@ -23,7 +24,7 @@ public class TransformBlockDynamicLiquid extends AbstractInjectJumpTransformer {
 
     @Override
     public String getTargetMethod() {
-        return "updateTick";
+        return ( CorePlugin.isDevEnv() ? "updateTick" : "func_149674_a");
     }
 
     @Override

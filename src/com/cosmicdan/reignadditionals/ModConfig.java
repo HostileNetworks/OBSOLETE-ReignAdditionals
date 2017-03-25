@@ -2,6 +2,9 @@ package com.cosmicdan.reignadditionals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+
+import com.cosmicdan.reignadditionals.util.BlockAndMeta;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -31,6 +34,9 @@ public class ModConfig {
     public static String TELEPORT_MESSAGE = "Teleporting...";
     public static int TELEPORT_SEGMENT_INCREMENT = 4;
     
+    private static BlockAndMeta[] NON_FLAMMABLE_BLOCKS;
+    private static boolean NON_FLAMMABLE_BLOCKS_BUILT = false;
+    private static String[] NON_FLAMMABLE_BLOCKS_RAW;
     
     public static String CONFIG_PATH;
     
@@ -75,6 +81,7 @@ public class ModConfig {
         Property ALLOW_BREAKING_WITHOUT_TOOL_PROP = CONFIG.get("removals", "enabledBreakingBlocksWithoutTool", ALLOW_BREAKING_WITHOUT_TOOL);
         ALLOW_BREAKING_WITHOUT_TOOL_PROP.comment = "Allow breaking some blocks (stone, wood) without their right tool class (pickaxe, axe)?";
         
+        // changes
         Property REIGN_IDLE_TARGET_DESPAWN_TICKS_PROP = CONFIG.get("changes", "idleTargetDespawnSeconds", REIGN_IDLE_TARGET_DESPAWN_SECS);
         REIGN_IDLE_TARGET_DESPAWN_TICKS_PROP.comment = "If one of the Entities listed has had no target for this many seconds, it will instantly despawn. \n"
                                         + "Designed to work with ESM's xray mode. Note that this is VERY lazy. Applies to the following entities:\n"
@@ -84,6 +91,9 @@ public class ModConfig {
         RARE_SAPLING_GROWTH_RATE_NERF_PROP.comment = "Rare sapling growth rate will be nerfed by a factor of this (i.e. it will only grow once in \n"
                                         + "every nth chance, default one in ten). Compounds with other mod nerfing e.g. HungerOverhaul.\n"
                                         + "Applies to all sapling from the following mods: Natura";
+        
+        Property NON_FLAMMABLE_BLOCKS_PROP = CONFIG.get("changes", "nonflammableBlocks", new String[0]);
+        NON_FLAMMABLE_BLOCKS_PROP.comment = "List of blocks that fire can't spread to. Put each block on a new line. Use the format modId:blockName[:meta]";
         
         // gui stuff
         CONFIG.addCustomCategoryComment("gui", "GUI settings are all client-side. Some should match the pack/server for lore or gameplay reasons, but they don't technically have to.");
@@ -130,7 +140,6 @@ public class ModConfig {
         Property TELEPORT_SEGMENT_INCREMENT_PROP = CONFIG.get("teleporter", "teleportSegmentIncrement", TELEPORT_SEGMENT_INCREMENT);
         TELEPORT_SEGMENT_INCREMENT_PROP.comment = "The teleport searches in an outward spiral from origin, increasing each segement length (edge) every 2 'corners'. This value determines how much to increment the segment length every second corner. A value of 1 will be the tightest spiral, checking every block (which is not necessary and just harms performance). Don't set too high if you want to make use of all available space though.";
         
-        
         // save config if it differs to the default values
         if(CONFIG.hasChanged())
             CONFIG.save();
@@ -141,8 +150,10 @@ public class ModConfig {
         MIXING_ENABLED_COBBLE = MIXING_ENABLED_COBBLE_PROP.getBoolean(MIXING_ENABLED_COBBLE);
         MIXING_ENABLED_SMOOTHSTONE = MIXING_ENABLED_SMOOTHSTONE_PROP.getBoolean(MIXING_ENABLED_SMOOTHSTONE);
         ALLOW_BREAKING_WITHOUT_TOOL = ALLOW_BREAKING_WITHOUT_TOOL_PROP.getBoolean(ALLOW_BREAKING_WITHOUT_TOOL);
+        
         REIGN_IDLE_TARGET_DESPAWN_SECS = REIGN_IDLE_TARGET_DESPAWN_TICKS_PROP.getInt(REIGN_IDLE_TARGET_DESPAWN_SECS);
         RARE_SAPLING_GROWTH_RATE_NERF = RARE_SAPLING_GROWTH_RATE_NERF_PROP.getInt(RARE_SAPLING_GROWTH_RATE_NERF);
+        NON_FLAMMABLE_BLOCKS_RAW = NON_FLAMMABLE_BLOCKS_PROP.getStringList();
         
         DAYS_PER_MOON_PHASE = DAYS_PER_MOON_PHASE_PROP.getInt(DAYS_PER_MOON_PHASE);
         STARTING_YEAR = STARTING_YEAR_PROP.getInt(STARTING_YEAR);
@@ -166,5 +177,15 @@ public class ModConfig {
         
         // all done
         Main.LOGGER.info("Config loaded");
+    }
+    
+    public static BlockAndMeta[] getNonflammableBlocks() {
+        if (!NON_FLAMMABLE_BLOCKS_BUILT) {
+            NON_FLAMMABLE_BLOCKS = BlockAndMeta.buildList("Non-flammable Blocks", NON_FLAMMABLE_BLOCKS_RAW);
+            NON_FLAMMABLE_BLOCKS_BUILT = true;
+            if (NON_FLAMMABLE_BLOCKS != null && NON_FLAMMABLE_BLOCKS.length == 0)
+                NON_FLAMMABLE_BLOCKS = null;
+        }
+        return NON_FLAMMABLE_BLOCKS;
     }
 }
