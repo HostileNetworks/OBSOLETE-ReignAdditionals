@@ -1,5 +1,6 @@
 package com.cosmicdan.reignadditionals.core;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.lwjgl.Sys;
@@ -22,12 +23,16 @@ public class CorePlugin implements IFMLLoadingPlugin {
     
     @Override
     public String[] getASMTransformerClass() {
-        return new String[]{
-          TransformBlockLiquid.class.getName(),
-          TransformBlockLiquid2.class.getName(),
-          TransformBlockDynamicLiquid.class.getName(),
-          TransformBlockFire.class.getName()
-        };
+        ArrayList<String> transformers = new ArrayList<String>();
+        transformers.add(TransformBlockLiquid.class.getName());
+        transformers.add(TransformBlockLiquid2.class.getName());
+        transformers.add(TransformBlockDynamicLiquid.class.getName());
+        transformers.add(TransformBlockFire.class.getName());
+        
+        // TODO: Add the ReactorCraft transformer IF Reign Modpack is detected
+        transformers.add(ReactorCraftOreGeneratorTransformer.class.getName());
+        
+        return transformers.toArray(new String[transformers.size()]);
     }
 
     @Override

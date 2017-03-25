@@ -12,6 +12,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraft.world.World;
 
 @Mod(
     modid = Main.MODID, 
@@ -58,5 +59,11 @@ public class Main {
         if (Main.IS_CLIENT) {
             Display.setTitle("Minecraft: Reign Modpack " + ModConfig.TITLE_SUFFIX);
         }
+    }
+    
+    public static boolean isOverworld(World world) {
+        if (world.provider.dimensionId == 0)
+            return true;
+        return false;
     }
 }
