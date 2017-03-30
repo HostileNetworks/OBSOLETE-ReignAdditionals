@@ -1,7 +1,6 @@
 tooltip.more=§eHold SHIFT for more info§r
 
 item.flintHandaxe.name=Flint Handaxe
-item.flintHandaxe.tooltip.more=Can chop trees (though not very well) and also shear blocks with right-click (half the time). Careful - even if the shear is unsuccessful, the block will still be destroyed!
 item.treeSap.name=Tree Sap
 item.rawRubber.name=Rubber
 item.saltClump.name=Salt Clump
