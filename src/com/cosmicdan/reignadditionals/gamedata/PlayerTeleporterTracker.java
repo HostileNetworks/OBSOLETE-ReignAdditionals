@@ -14,8 +14,6 @@ import net.minecraftforge.common.IExtendedEntityProperties;
 public class PlayerTeleporterTracker implements IExtendedEntityProperties {
     public final static String EXT_PROP_NAME = "PlayerTeleporterTracker";
     
-    private final EntityPlayer entityPlayer;
-    
     private boolean hasData = false;
     private int lastTeleportPosX;
     private int lastTeleportPosZ;
@@ -32,7 +30,8 @@ public class PlayerTeleporterTracker implements IExtendedEntityProperties {
     private boolean isTeleporting = false;
     
     public PlayerTeleporterTracker(EntityPlayer entityPlayer) {
-        this.entityPlayer = entityPlayer;
+        // not needed anymore
+        //this.entityPlayer = entityPlayer;
     }
     
     public static final void register(EntityPlayer entityPlayer) {

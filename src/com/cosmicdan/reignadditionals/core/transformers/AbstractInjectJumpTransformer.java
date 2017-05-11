@@ -67,7 +67,6 @@ public abstract class AbstractInjectJumpTransformer implements IClassTransformer
         Iterator<MethodNode> methods = classNode.methods.iterator();
         while(methods.hasNext()) {
             MethodNode m = methods.next();
-            int fdiv_index = -1;
             if ((m.name.equals(targetMethod) && m.desc.equals(targetDesc))) {
                 targetNode = getTargetNode(m);
                 InsnList toInject = injectOps(new InsnList());

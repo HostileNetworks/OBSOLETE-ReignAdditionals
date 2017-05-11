@@ -21,7 +21,6 @@ public class GuiTextOverlay {
     private static EntityPlayer player;
     private static int screenWidth;
     private static int screenHeight;
-    private static int screenScale;
     
     private static final ResourceLocation[] iconsMoonphases = new ResourceLocation[8];
     private static final ResourceLocation[] iconsSeasons = new ResourceLocation[4];
@@ -68,7 +67,6 @@ public class GuiTextOverlay {
         player = mc.thePlayer;
         screenWidth = event.resolution.getScaledWidth();
         screenHeight = event.resolution.getScaledHeight();
-        screenScale = event.resolution.getScaleFactor();
         
         // update the current day/year values
         TICKER++;

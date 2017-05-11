@@ -49,10 +49,7 @@ public abstract class AbstractInjectMethodStart implements IClassTransformer  {
         Iterator<MethodNode> methods = classNode.methods.iterator();
         while(methods.hasNext()) {
             MethodNode m = methods.next();
-            int fdiv_index = -1;
             if ((m.name.equals(targetMethod) && m.desc.equals(targetDesc))) {
-                AbstractInsnNode currentNode = null;
-                AbstractInsnNode targetNode = null;
                 AbstractInsnNode ain = m.instructions.getFirst();
                 InsnList toInject = injectOps(new InsnList());
                 m.instructions.insertBefore(ain, toInject);

@@ -4,12 +4,8 @@ import java.util.List;
 
 import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
-import com.cosmicdan.reignadditionals.util.TextUtils;
-
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,7 +44,7 @@ public class ItemMaterializer extends Item {
             
             if (itemTeleporterSlot >= 0) {
                 teleporterProps.rematerialize();
-                itemStack.stackSize = 0;
+                itemStack.stackSize--;
                 entityPlayer.clearActivePotions();
                 entityPlayer.inventory.setInventorySlotContents(itemTeleporterSlot, null);
                 entityPlayer.inventory.setInventorySlotContents(entityPlayer.inventory.currentItem, null);

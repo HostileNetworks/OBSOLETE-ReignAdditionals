@@ -2,8 +2,6 @@ package com.cosmicdan.reignadditionals;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-
 import com.cosmicdan.reignadditionals.util.BlockAndMeta;
 
 import net.minecraftforge.common.config.Configuration;

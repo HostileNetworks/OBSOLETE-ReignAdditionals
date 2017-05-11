@@ -68,19 +68,4 @@ public class EntitySimpleParticleFX extends EntityFX {
             this.motionZ *= 0.67D;
         }
     }
-    
-    private boolean aboutToEnterNewBlock(double currentPos, double currentMotion) {
-        int newBlockOffset = 0;
-        if (currentMotion > 0) {
-            newBlockOffset = (int) Math.ceil(currentPos);
-            if ((currentPos + currentMotion) > newBlockOffset)
-                return true;
-        } else {
-            newBlockOffset = (int) Math.floor(currentPos);
-            if ((currentPos + currentMotion) < newBlockOffset)
-                return true;
-        }
-        return false;
-    }
-
 }

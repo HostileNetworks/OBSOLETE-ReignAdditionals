@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.cosmicdan.reignadditionals.Main;
-import com.cosmicdan.reignadditionals.util.TextUtils;
-
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;

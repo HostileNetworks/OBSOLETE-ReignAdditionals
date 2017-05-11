@@ -3,17 +3,13 @@ package com.cosmicdan.reignadditionals.items;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.ModConfig;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
-import com.cosmicdan.reignadditionals.util.TextUtils;
 
-import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,15 +21,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.BiomeDictionary;
 import net.shadowmage.ancientwarfare.core.gamedata.ChunkClaims;
 import net.shadowmage.ancientwarfare.core.gamedata.ChunkClaims.TownHallEntry;
-import net.shadowmage.ancientwarfare.core.interop.InteropFtbu;
 import net.shadowmage.ancientwarfare.core.interop.ModAccessors;
+import net.shadowmage.ancientwarfare.core.util.EntityTools;
 import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
 
 public class ItemTeleporter extends Item {
-    private String unlocalizedName;
 
     protected ItemTeleporter(String unlocalizedName) {
-        this.unlocalizedName = unlocalizedName;
         this.setUnlocalizedName(unlocalizedName);
         this.setTextureName(Main.MODID + ":" + unlocalizedName);
     }
@@ -49,6 +43,18 @@ public class ItemTeleporter extends Item {
         if (world.isRemote)
             return itemStack;
         
+        final float randomPitch = (float) (Math.random() * (1.1f - 0.9f) + 0.9f);
+        world.playSoundAtEntity(entityPlayer, "ancientwarfare:teleport.out", 0.6F, randomPitch);
+        
+        // first check if the player has a HQ, if so teleport them there and be done with it
+        int[] hqPos = HeadquartersTracker.get(world).getHqPos(entityPlayer.getCommandSenderName(), world);
+        if (hqPos != null) {
+            EntityTools.teleportPlayerToBlock(entityPlayer, world, hqPos, false);
+            world.playSoundAtEntity(entityPlayer, "ancientwarfare:teleport.in", 0.6F, randomPitch);
+            itemStack.stackSize--;
+            return itemStack;
+        }
+        
         final PlayerTeleporterTracker teleporterProps = PlayerTeleporterTracker.get(entityPlayer);
         
         if (teleporterProps.isTeleporting())
@@ -60,6 +66,7 @@ public class ItemTeleporter extends Item {
             public void run(){
                 //System.out.println("Teleporting...");
                 entityPlayer.getFoodStats().addStats(20, 10);
+                entityPlayer.addPotionEffect(new PotionEffect(Potion.invisibility.getId(), Integer.MAX_VALUE, 0));
                 
                 entityPlayer.addChatMessage(new ChatComponentText(ModConfig.TELEPORT_MESSAGE));
                 
@@ -224,13 +231,13 @@ public class ItemTeleporter extends Item {
                         if (foundBiome) {
                             //System.out.println("...success! Found plains biome at " + posX + "x" + posZ + " which has a beach/ocean/river biome within a " + innerSegmentLengthMax + " block radius.");
                             entityPlayer.setPositionAndUpdate(posX + 0.5D, world.getTopSolidOrLiquidBlock(posX, posZ), posZ + 0.5D);
+                            world.playSoundAtEntity(entityPlayer, "ancientwarfare:teleport.in", 0.6F, randomPitch);
                             
                             prevPosX.add(posX);
                             prevPosZ.add(posZ);
                             teleporterProps.setTeleportData(posX, posZ, vectorX, vectorZ, segmentLength, segmentPassed, prevPosX, prevPosZ);
                             teleporterProps.setTeleporting(false);
                             
-                            entityPlayer.addPotionEffect(new PotionEffect(Potion.invisibility.getId(), Integer.MAX_VALUE, 0));
                             break;
                         }
                         //System.out.println("...nope! Try again next cooldown!");
