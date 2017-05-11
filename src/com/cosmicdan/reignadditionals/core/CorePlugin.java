@@ -37,10 +37,6 @@ public class CorePlugin implements IFMLLoadingPlugin {
         
         /********************************************************************************
          * THIS VERSION OF REIGN ADDITIONALS IS ONLY ALLOWED FOR USE IN THE REIGN MODPACK.
-         * 
-         * IF YOU WANT TO USE THIS MOD FOR YOUR OWN WORK, REMOVE THIS SAFETY CHECK, AND
-         * YOU *MUST* ALSO REMOVE THE REIKA MODS TRANSFORMER(S). UNLESS, OBVIOUSLY, IF
-         * REIKA ALSO GIVES YOU PERMISSION TO USE THESE CHANGES.
          ********************************************************************************/
         
         boolean isReignModpack = true;
@@ -95,10 +91,8 @@ public class CorePlugin implements IFMLLoadingPlugin {
                 throw new IllegalStateException("A specific version of ReactorCraft was not found. You need to update ReignAdditionals, Dan!");
         }
         
-        transformers.add(ReactorCraftOreGeneratorTransformer.class.getName());
-        
         /**
-         * END SPECIAL TRANSFORMERS/SAFETY CHECKS
+         * END SPECIAL SAFETY CHECKS
          */
         
         return transformers.toArray(new String[transformers.size()]);
