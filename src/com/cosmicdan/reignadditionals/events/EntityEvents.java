@@ -3,6 +3,7 @@ package com.cosmicdan.reignadditionals.events;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 
 import com.cosmicdan.reignadditionals.ModConfig;
@@ -137,12 +138,12 @@ public class EntityEvents {
         if (claim != null) {
             if (claim.ownerID == -1) {
                 // commonwealth/spawn claim
-                //if (event.creatureType.typeID.equals("MONSTER"))
-                event.setCanceled(true);
+                if (ArrayUtils.contains(ModConfig.PREVENT_CREATURETYPES_COMMONWEALTH, event.creatureType.typeID))
+                    event.setCanceled(true);
             } else {
                 // player claim
-                //if (event.creatureType.typeID.equals("MONSTER")) {
-                event.setCanceled(true);
+                if (ArrayUtils.contains(ModConfig.PREVENT_CREATURETYPES_PLAYERCLAIMS, event.creatureType.typeID))
+                    event.setCanceled(true);
             }
         }
     }
