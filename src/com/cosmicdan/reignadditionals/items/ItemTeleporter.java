@@ -10,6 +10,8 @@ import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ftb.utils.world.LMWorldServer;
+import ftb.utils.world.claims.ClaimedChunk;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -133,14 +135,13 @@ public class ItemTeleporter extends Item {
                         int chunkScanSegmentLengthMax = ModConfig.TELEPORT_CLAIMEDCHUNK_BUFFER * 2 + 1;
                         
                         while (true) {
-                            // search for nearby existing chunk claims
-                            LinkedHashSet<TownHallEntry> claimStakes = ChunkClaims.get(world).getClaimStakes(chunkX, chunkZ, world.provider.dimensionId);
-                            //List<TownHallOwner> claimStakes = InteropFtbuChunkData.get(world).chunkClaimsGet(new InteropFtbuChunkData.ChunkLocation(chunkX, chunkZ, world.provider.dimensionId));
-                            if (claimStakes != null) {
-                                TownHallEntry firstEntry = claimStakes.iterator().next();
-                                ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(firstEntry.getOwnerName());
+                            // check for existing claim
+                            ClaimedChunk claim = LMWorldServer.inst.claimedChunks.getChunk(world.provider.dimensionId, chunkX, chunkZ);
+                            if (claim != null) {
+                                String claimPlayerName = claim.getOwnerS().getPlayer().getCommandSenderName();
+                                ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(claimPlayerName);
                                 if (claimTeam == null || entityPlayer.getTeam() == null || !claimTeam.isSameTeam(entityPlayer.getTeam())) {
-                                    if (!ModAccessors.FTBU.areFriends(firstEntry.getOwnerName(), entityPlayer.getCommandSenderName())) {
+                                    if (!ModAccessors.FTBU.areFriends(claimPlayerName, entityPlayer.getCommandSenderName())) {
                                         isTooClose = true;
                                         break;
                                     }
