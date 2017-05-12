@@ -10,6 +10,9 @@ import com.cosmicdan.reignadditionals.client.gui.GuiTextOverlay;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import ftb.utils.world.LMWorldServer;
+import ftb.utils.world.claims.ClaimedChunk;
+import jas.spawner.modern.ForgeEvents.StartSpawnCreaturesInChunks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;
@@ -125,6 +128,22 @@ public class EntityEvents {
         if (!event.entity.worldObj.getChunkProvider().chunkExists(event.entity.chunkCoordX, event.entity.chunkCoordZ)) {
             event.entity.setVelocity(0, 0, 0);
             return;
+        }
+    }
+    
+    @SubscribeEvent
+    public void onStartSpawnCreaturesInChunks(StartSpawnCreaturesInChunks event) {
+        ClaimedChunk claim = LMWorldServer.inst.claimedChunks.getChunk(event.world.provider.dimensionId, event.chunkCoordIntPair.chunkXPos, event.chunkCoordIntPair.chunkZPos);
+        if (claim != null) {
+            if (claim.ownerID == -1) {
+                // commonwealth/spawn claim
+                //if (event.creatureType.typeID.equals("MONSTER"))
+                event.setCanceled(true);
+            } else {
+                // player claim
+                //if (event.creatureType.typeID.equals("MONSTER")) {
+                event.setCanceled(true);
+            }
         }
     }
 }

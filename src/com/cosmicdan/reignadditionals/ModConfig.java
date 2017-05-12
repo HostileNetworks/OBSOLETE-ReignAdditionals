@@ -36,6 +36,10 @@ public class ModConfig {
     private static boolean NON_FLAMMABLE_BLOCKS_BUILT = false;
     private static String[] NON_FLAMMABLE_BLOCKS_RAW;
     
+    private static String[] BLOCK_CREATURETYPES_COMMONWEALTH = new String[]{"MONSTER", "DAYMONSTER"};
+    private static String[] BLOCK_CREATURETYPES_PLAYERCLAIMS = new String[]{"MONSTER", "DAYMONSTER"};
+    
+    
     public static String CONFIG_PATH;
     
     private static Configuration CONFIG;
@@ -92,6 +96,14 @@ public class ModConfig {
         
         Property NON_FLAMMABLE_BLOCKS_PROP = CONFIG.get("changes", "nonflammableBlocks", new String[0]);
         NON_FLAMMABLE_BLOCKS_PROP.comment = "List of blocks that fire can't spread to. Put each block on a new line. Use the format modId:blockName[:meta]";
+        
+        // spawning
+        CONFIG.addCustomCategoryComment("spawning", "Settings that modify spawning behavior, some of which modify JAS behavior. All server-side.");
+        Property BLOCK_CREATURETYPES_COMMONWEALTH_PROP = CONFIG.get("spawning", "blockJasCreatureTypesCommonwealth", BLOCK_CREATURETYPES_COMMONWEALTH);
+        BLOCK_CREATURETYPES_COMMONWEALTH_PROP.comment = "List JAS CreatureTypes that should be blocked from spawning in the Commonwealth. Must match values in your JAS CreatureType.cfg";
+        
+        Property BLOCK_CREATURETYPES_PLAYERCLAIMS_PROP = CONFIG.get("spawning", "blockJasCreatureTypesPlayerClaims", BLOCK_CREATURETYPES_PLAYERCLAIMS);
+        BLOCK_CREATURETYPES_PLAYERCLAIMS_PROP.comment = "List JAS CreatureTypes that should be blocked from spawning in Player Claims. Must match values in your JAS CreatureType.cfg"; 
         
         // gui stuff
         CONFIG.addCustomCategoryComment("gui", "GUI settings are all client-side. Some should match the pack/server for lore or gameplay reasons, but they don't technically have to.");
@@ -152,6 +164,9 @@ public class ModConfig {
         REIGN_IDLE_TARGET_DESPAWN_SECS = REIGN_IDLE_TARGET_DESPAWN_TICKS_PROP.getInt(REIGN_IDLE_TARGET_DESPAWN_SECS);
         RARE_SAPLING_GROWTH_RATE_NERF = RARE_SAPLING_GROWTH_RATE_NERF_PROP.getInt(RARE_SAPLING_GROWTH_RATE_NERF);
         NON_FLAMMABLE_BLOCKS_RAW = NON_FLAMMABLE_BLOCKS_PROP.getStringList();
+        
+        BLOCK_CREATURETYPES_PLAYERCLAIMS = BLOCK_CREATURETYPES_PLAYERCLAIMS_PROP.getStringList();
+        BLOCK_CREATURETYPES_COMMONWEALTH = BLOCK_CREATURETYPES_COMMONWEALTH_PROP.getStringList(); 
         
         DAYS_PER_MOON_PHASE = DAYS_PER_MOON_PHASE_PROP.getInt(DAYS_PER_MOON_PHASE);
         STARTING_YEAR = STARTING_YEAR_PROP.getInt(STARTING_YEAR);
