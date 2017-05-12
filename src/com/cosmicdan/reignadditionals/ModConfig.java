@@ -29,7 +29,8 @@ public class ModConfig {
     public static int TELEPORT_SEARCH_WATERBIOME_RADIUS = 64;
     public static int TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = 300;
     public static int TELEPORT_CLAIMEDCHUNK_BUFFER = 100;
-    public static String TELEPORT_MESSAGE = "Teleporting...";
+    public static String TELEPORT_OUT_MESSAGE = "Searching for ideal base location, MAY TAKE A WHILE - PLEASE WAIT...";
+    public static String TELEPORT_IN_MESSAGE = "...found ideal base location! Please wait for chunks to load and have a look around before teleporting again.";
     public static int TELEPORT_SEGMENT_INCREMENT = 4;
     
     // use getNonflammableBlocks getter for these config values
@@ -142,8 +143,11 @@ public class ModConfig {
         Property TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN_PROP = CONFIG.get("teleporter", "teleportSearchWaterBiomeRetryCooldown", TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN);
         TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN_PROP.comment = "When the beach/ocean/river radius search fails, wait this many blocks before scanning again. Remember that the search pattern is an outwards spiral - so keep this number low to make best use of potential starting locations.";
         
-        Property TELEPORT_MESSAGE_PROP = CONFIG.get("teleporter", "teleportMessage", TELEPORT_MESSAGE);
-        TELEPORT_MESSAGE_PROP.comment = "Chat message to display when the teleport stone starts searching for a location.";
+        Property TELEPORT_OUT_MESSAGE_PROP = CONFIG.get("teleporter", "teleportOutMessage", TELEPORT_OUT_MESSAGE);
+        TELEPORT_OUT_MESSAGE_PROP.comment = "Chat message to display when the teleport stone starts searching for a location.";
+        
+        Property TELEPORT_IN_MESSAGE_PROP = CONFIG.get("teleporter", "teleportInMessage", TELEPORT_IN_MESSAGE);
+        TELEPORT_IN_MESSAGE_PROP.comment = "Chat message to display after the teleport stone has teleported someone";
         
         Property TELEPORT_CLAIMEDCHUNK_BUFFER_PROP = CONFIG.get("teleporter", "teleportClaimedChunkBuffer", TELEPORT_CLAIMEDCHUNK_BUFFER);
         TELEPORT_CLAIMEDCHUNK_BUFFER_PROP.comment = "Minimim space/distance in chunks (i.e. a radius) to teleport the player from chunks that are already claimed by non-team players, OR that have a Headquarters";
@@ -180,7 +184,8 @@ public class ModConfig {
         TELEPORT_MIN_DISTANCE = TELEPORT_MIN_DISTANCE_PROP.getInt(TELEPORT_MIN_DISTANCE);
         TELEPORT_SEARCH_WATERBIOME_RADIUS = TELEPORT_SEARCH_WATERBIOME_RADIUS_PROP.getInt(TELEPORT_SEARCH_WATERBIOME_RADIUS);
         TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN = TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN_PROP.getInt(TELEPORT_SEARCH_WATERBIOME_RETRYCOOLDOWN);
-        TELEPORT_MESSAGE = TELEPORT_MESSAGE_PROP.getString();
+        TELEPORT_OUT_MESSAGE = TELEPORT_OUT_MESSAGE_PROP.getString();
+        TELEPORT_IN_MESSAGE = TELEPORT_IN_MESSAGE_PROP.getString();
         TELEPORT_CLAIMEDCHUNK_BUFFER = TELEPORT_CLAIMEDCHUNK_BUFFER_PROP.getInt(TELEPORT_CLAIMEDCHUNK_BUFFER);
         TELEPORT_SEGMENT_INCREMENT = TELEPORT_SEGMENT_INCREMENT_PROP.getInt(TELEPORT_SEGMENT_INCREMENT);
         

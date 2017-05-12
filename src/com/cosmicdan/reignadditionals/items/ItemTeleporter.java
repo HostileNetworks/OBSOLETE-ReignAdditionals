@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.cosmicdan.reignadditionals.Main;
 import com.cosmicdan.reignadditionals.ModConfig;
+import com.cosmicdan.reignadditionals.core.CorePlugin;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 
 import cpw.mods.fml.relauncher.Side;
@@ -29,6 +30,9 @@ import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
 
 public class ItemTeleporter extends Item {
 
+    private static final boolean DEBUG = false;
+    
+    
     protected ItemTeleporter(String unlocalizedName) {
         this.setUnlocalizedName(unlocalizedName);
         this.setTextureName(Main.MODID + ":" + unlocalizedName);
@@ -45,10 +49,16 @@ public class ItemTeleporter extends Item {
         if (world.isRemote)
             return itemStack;
         
+        // get player's existing teleport props and return if they're already in the process of teleporting
+        final PlayerTeleporterTracker teleporterProps = PlayerTeleporterTracker.get(entityPlayer);
+        if (teleporterProps.isTeleporting())
+            return itemStack;
+        
+        // play the teleport-away sound
         final float randomPitch = (float) (Math.random() * (1.1f - 0.9f) + 0.9f);
         world.playSoundAtEntity(entityPlayer, "ancientwarfare:teleport.out", 0.6F, randomPitch);
         
-        // first check if the player has a HQ, if so teleport them there and be done with it
+        // check if the player has a HQ, if so teleport them there and be done with it
         int[] hqPos = HeadquartersTracker.get(world).getHqPos(entityPlayer.getCommandSenderName(), world);
         if (hqPos != null) {
             EntityTools.teleportPlayerToBlock(entityPlayer, world, hqPos, false);
@@ -57,20 +67,12 @@ public class ItemTeleporter extends Item {
             return itemStack;
         }
         
-        final PlayerTeleporterTracker teleporterProps = PlayerTeleporterTracker.get(entityPlayer);
-        
-        if (teleporterProps.isTeleporting())
-            return itemStack;
-        else
-            teleporterProps.setTeleporting(true);
-        
         Thread thread = new Thread(){
             public void run(){
-                //System.out.println("Teleporting...");
+                teleporterProps.setTeleporting(true);
                 entityPlayer.getFoodStats().addStats(20, 10);
                 entityPlayer.addPotionEffect(new PotionEffect(Potion.invisibility.getId(), Integer.MAX_VALUE, 0));
-                
-                entityPlayer.addChatMessage(new ChatComponentText(ModConfig.TELEPORT_MESSAGE));
+                entityPlayer.addChatMessage(new ChatComponentText(ModConfig.TELEPORT_OUT_MESSAGE));
                 
                 // set some default/initial values in case this is a fresh teleport
                 int posX = (int) entityPlayer.posX;
@@ -99,22 +101,43 @@ public class ItemTeleporter extends Item {
                 int searchCooldown = ModConfig.TELEPORT_MIN_DISTANCE;
                 int innerSegmentLengthMax = ModConfig.TELEPORT_SEARCH_WATERBIOME_RADIUS * 2 + 1;
                 
-                //System.out.println("Starting search at " + posX + "x" + posZ);
+                if (DEBUG) System.out.println("Starting teleport from " + posX + "x" + "posZ" + " with a segment length of " + segmentLength + ", cooldown of " + searchCooldown + " and waterbiome search distance of " + innerSegmentLengthMax);
                 
                 while (true) {
                     // NB: On my imaginary grid, I consider "right" as X+ and "down" as Z+
                     if (searchCooldown > 0)
                         searchCooldown--;
                     
+                    // take a step "forward"
+                    posX += vectorX;
+                    posZ += vectorZ;
+                    segmentPassed++;
+                    if (segmentPassed == segmentLength) {
+                        // segment done
+                        segmentPassed = 0;
+                        
+                        // rotate the vector
+                        int tmp = vectorX;
+                        vectorX = -vectorZ;
+                        vectorZ = tmp;
+                        
+                        // bump the segment length if necessary (every second turn)
+                        if (vectorZ == 0)
+                            segmentLength += ModConfig.TELEPORT_SEGMENT_INCREMENT;
+                    }
+                    //try {
+                    //    Thread.sleep(1);
+                    //} catch (InterruptedException e) {}
+                    
                     if (searchCooldown == 0 && isBiomeTypeAtPos(world, posX, posZ, BiomeDictionary.Type.PLAINS)) {
-                        //System.out.println("Cooldown reached! Checking if " + posX + "x" + posZ + " is far enough away...");
+                        if (DEBUG) System.out.println("Cooldown reached! Checking if we've passed the minimum distance since last teleport...");
                         searchCooldown = ModConfig.TELEPORT_MIN_DISTANCE;
                         boolean isTooClose = false;
                         
                         // Make sure this new position is further than searchMinDistance to the last teleport position
                         for (int i = 0; i < prevPosX.size(); i++) {
                             if (Math.hypot(posX-prevPosX.get(i), posZ-prevPosZ.get(i)) < ModConfig.TELEPORT_MIN_DISTANCE) {
-                                //System.out.println("...nope! Try again next cool-down...");
+                                if (DEBUG) System.out.println("    ...nope! Try again next cool-down...");
                                 isTooClose = true;
                                 break;
                             }
@@ -123,7 +146,7 @@ public class ItemTeleporter extends Item {
                         if (isTooClose)
                             continue;
                         
-                        //System.out.println("...yep! Check if there is a non-friendly claim or HQ nearby...");
+                        if (DEBUG) System.out.println("    ...yep! Check if there is a non-allied claim nearby...");
                         
                         // Make sure that there are no non-allied player claims nearby
                         int chunkScanVectorX = 1;
@@ -138,10 +161,17 @@ public class ItemTeleporter extends Item {
                             // check for existing claim
                             ClaimedChunk claim = LMWorldServer.inst.claimedChunks.getChunk(world.provider.dimensionId, chunkX, chunkZ);
                             if (claim != null) {
+                                if (claim.ownerID == -1) {
+                                    // commonwealth
+                                    if (DEBUG) System.out.println("        ...yep! Found commonwealth at " + chunkX * 16 + " x " + chunkZ * 16 + ", trying again next cooldown...");
+                                    isTooClose = true;
+                                    break;
+                                }
                                 String claimPlayerName = claim.getOwnerS().getPlayer().getCommandSenderName();
                                 ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(claimPlayerName);
                                 if (claimTeam == null || entityPlayer.getTeam() == null || !claimTeam.isSameTeam(entityPlayer.getTeam())) {
                                     if (!ModAccessors.FTBU.areFriends(claimPlayerName, entityPlayer.getCommandSenderName())) {
+                                        if (DEBUG) System.out.println("        ...yep! Found a claim at " + chunkX * 16 + " x " + chunkZ * 16 + " belonging to " + claimPlayerName + ", trying again next cooldown...");
                                         isTooClose = true;
                                         break;
                                     }
@@ -167,7 +197,6 @@ public class ItemTeleporter extends Item {
                                 
                                 if (chunkScanSegmentLength == chunkScanSegmentLengthMax + 1) {
                                     // search limit reached - no nearby claims found!
-                                    //System.out.println("No non-allied claims nearby, teleport point is OK!");
                                     break;
                                 }
                             }
@@ -176,12 +205,10 @@ public class ItemTeleporter extends Item {
                             //} catch (InterruptedException e) {}
                         }
                         
-                        if (isTooClose) {
-                            //System.out.println("...yep! Try again next cooldown!");
+                        if (isTooClose)
                             continue;
-                        }
                         
-                        //System.out.println("Nope! Now, is a water-type biome nearby...?");
+                        if (DEBUG) System.out.println("        ...nope! Now, is there a water biome nearby...?");
                         
                         // do another spiral search from here for a beach/ocean/river biome 
                         int innerVectorX = 1;
@@ -195,6 +222,7 @@ public class ItemTeleporter extends Item {
                             if (isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.BEACH) || isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.OCEAN) || isBiomeTypeAtPos(world, innerPosX, innerPosZ, BiomeDictionary.Type.RIVER)) {
                                 // verify that the candidate block has solid footing before confirming
                                 if (!world.getBlock(posX, world.getTopSolidOrLiquidBlock(posX, posZ), posZ).getMaterial().isLiquid()) {
+                                    if (DEBUG) System.out.println("            ...yep!");
                                     foundBiome = true;
                                     break;
                                 }
@@ -230,7 +258,7 @@ public class ItemTeleporter extends Item {
                         }
                         
                         if (foundBiome) {
-                            //System.out.println("...success! Found plains biome at " + posX + "x" + posZ + " which has a beach/ocean/river biome within a " + innerSegmentLengthMax + " block radius.");
+                            if (DEBUG) System.out.println("                ...success! Teleporting to " + posX + "x" + posZ + "!");
                             entityPlayer.setPositionAndUpdate(posX + 0.5D, world.getTopSolidOrLiquidBlock(posX, posZ), posZ + 0.5D);
                             world.playSoundAtEntity(entityPlayer, "ancientwarfare:teleport.in", 0.6F, randomPitch);
                             
@@ -239,31 +267,12 @@ public class ItemTeleporter extends Item {
                             teleporterProps.setTeleportData(posX, posZ, vectorX, vectorZ, segmentLength, segmentPassed, prevPosX, prevPosZ);
                             teleporterProps.setTeleporting(false);
                             
+                            entityPlayer.addChatMessage(new ChatComponentText(""));
+                            entityPlayer.addChatMessage(new ChatComponentText(ModConfig.TELEPORT_IN_MESSAGE));
                             break;
                         }
-                        //System.out.println("...nope! Try again next cooldown!");
+                        if (DEBUG) System.out.println("            ...nope! Try again next cooldown.");
                     }
-                    
-                    // take a step "forward"
-                    posX += vectorX;
-                    posZ += vectorZ;
-                    segmentPassed++;
-                    if (segmentPassed == segmentLength) {
-                        // segment done
-                        segmentPassed = 0;
-                        
-                        // rotate the vector
-                        int tmp = vectorX;
-                        vectorX = -vectorZ;
-                        vectorZ = tmp;
-                        
-                        // bump the segment length if necessary (every second turn)
-                        if (vectorZ == 0)
-                            segmentLength += ModConfig.TELEPORT_SEGMENT_INCREMENT;
-                    }
-                    //try {
-                    //    Thread.sleep(1);
-                    //} catch (InterruptedException e) {}
                 }
             }
         };
