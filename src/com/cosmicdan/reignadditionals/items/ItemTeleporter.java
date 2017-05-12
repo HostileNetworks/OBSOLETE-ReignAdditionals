@@ -167,7 +167,7 @@ public class ItemTeleporter extends Item {
                                     isTooClose = true;
                                     break;
                                 }
-                                String claimPlayerName = claim.getOwnerS().getPlayer().getCommandSenderName();
+                                String claimPlayerName = claim.getOwnerS().getProfile().getName();
                                 ScorePlayerTeam claimTeam = world.getScoreboard().getPlayersTeam(claimPlayerName);
                                 if (claimTeam == null || entityPlayer.getTeam() == null || !claimTeam.isSameTeam(entityPlayer.getTeam())) {
                                     if (!ModAccessors.FTBU.areFriends(claimPlayerName, entityPlayer.getCommandSenderName())) {
