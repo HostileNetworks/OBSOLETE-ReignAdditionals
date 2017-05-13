@@ -4,6 +4,7 @@ item.flintHandaxe.name=Flint Handaxe
 item.treeSap.name=Tree Sap
 item.rawRubber.name=Rubber
 item.saltClump.name=Salt Clump
+item.crystalizedFlux.name=Crystalized Flux
 item.teleporter.name=Teleport Stone
 item.teleporter.tooltip.more=Using this will dematerialize and teleport you to the nearest ideal base location. Can be used multiple times, each time searching further and further away afrom the starting location. Once you are happy with the teleport destination, use the purple 'Materializer' item to settle the area.
 item.materializer.name=Materializer

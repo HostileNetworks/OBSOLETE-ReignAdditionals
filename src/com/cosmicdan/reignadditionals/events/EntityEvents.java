@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import com.cosmicdan.reignadditionals.ModConfig;
 import com.cosmicdan.reignadditionals.client.gui.GuiTextOverlay;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
+import com.cosmicdan.reignadditionals.items.ModItems;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import ftb.utils.world.LMWorldServer;
@@ -17,6 +18,7 @@ import jas.spawner.modern.ForgeEvents.StartSpawnCreaturesInChunks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -27,9 +29,12 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.minecart.MinecartUpdateEvent;
 import net.shadowmage.ancientwarfare.core.interop.ModAccessors;
+import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
+import net.shadowmage.ancientwarfare.npc.tile.TileTownHall;
 import openblocks.api.GraveSpawnEvent;
 
 public class EntityEvents {
@@ -144,6 +149,48 @@ public class EntityEvents {
                 // player claim
                 if (ArrayUtils.contains(ModConfig.PREVENT_CREATURETYPES_PLAYERCLAIMS, event.creatureType.typeID))
                     event.setCanceled(true);
+            }
+        }
+    }
+    
+    private static final Object LIVING_DROPS_EVENT_LOCK = new Object();
+    
+    @SubscribeEvent
+    public void onLivingDropsFromDeath(LivingDropsEvent event) {
+        if (event.entityLiving.worldObj.isRemote)
+            return;
+        /*
+         * Add Crystalized Flux to player HQ if this was a mob that died in player territory
+         */
+        if (!(event.entityLiving instanceof IMob))
+            return;
+    
+        ClaimedChunk claim = LMWorldServer.inst.claimedChunks.getChunk(event.entityLiving.worldObj.provider.dimensionId, event.entity.chunkCoordX, event.entity.chunkCoordZ);
+        if (claim != null && claim.ownerID >= 0) {
+            String claimOwner = claim.getOwnerS().getProfile().getName();
+            int[] hqPos = HeadquartersTracker.get(event.entityLiving.worldObj).getHqPos(claimOwner, event.entityLiving.worldObj);
+            if (hqPos != null) {
+                int fluxWorth = (int) event.entityLiving.getMaxHealth() / 20; // one flux per 20 HP
+                TileTownHall hq = (TileTownHall) event.entityLiving.worldObj.getTileEntity(hqPos[0], hqPos[1], hqPos[2]);
+                int hqMaxSlots = hq.getSizeInventory();
+                synchronized (LIVING_DROPS_EVENT_LOCK) {
+                    for (int fluxCount = 1; fluxCount <= fluxWorth; fluxCount++) {
+                        for (int slot = hqMaxSlots - 1; slot >= 0; slot--) {
+                            ItemStack thisSlotStack = hq.getStackInSlot(slot);
+                            if (thisSlotStack == null) {
+                                // empty slot
+                                hq.setInventorySlotContents(slot, new ItemStack(ModItems.CRYSTALIZED_FLUX, 1));
+                                break;
+                            } else {
+                                // existing item in this slot
+                                if (thisSlotStack.getItem() == ModItems.CRYSTALIZED_FLUX && thisSlotStack.stackSize < thisSlotStack.getMaxStackSize()) {
+                                    hq.setInventorySlotContents(slot, new ItemStack(ModItems.CRYSTALIZED_FLUX, thisSlotStack.stackSize + 1));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
