@@ -7,7 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 
 import com.cosmicdan.reignadditionals.ModConfig;
-import com.cosmicdan.reignadditionals.client.gui.GuiTextOverlay;
+import com.cosmicdan.reignadditionals.client.gui.GuiGameOverlay;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 import com.cosmicdan.reignadditionals.items.ModItems;
 
@@ -44,7 +44,7 @@ public class EntityEvents {
         if (event.entity instanceof EntityPlayer) {
             if (event.world.isRemote) {
                 if (Minecraft.getMinecraft().thePlayer.getUniqueID().equals(((EntityPlayer)event.entity).getUniqueID()))
-                    GuiTextOverlay.triggerPlayerJoin();
+                    GuiGameOverlay.triggerPlayerJoin();
             }
             PlayerTeleporterTracker teleporterProps = PlayerTeleporterTracker.get((EntityPlayer)event.entity);
             if (teleporterProps.isDematerialized()) {

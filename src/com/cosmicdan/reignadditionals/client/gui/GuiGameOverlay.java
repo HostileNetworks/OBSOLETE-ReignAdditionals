@@ -15,7 +15,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.shadowmage.ancientwarfare.core.gamedata.Timekeeper;
 
-public class GuiTextOverlay {
+public class GuiGameOverlay {
     private final Minecraft mc;
     private final TextureManager re;
     private static EntityPlayer player;
@@ -44,7 +44,7 @@ public class GuiTextOverlay {
     private static boolean doNewDayText = false;
     private static int newDayDrawTime = 0;
     
-    public GuiTextOverlay(Minecraft mc) {
+    public GuiGameOverlay(Minecraft mc) {
         this.mc = mc;
         this.re = mc.renderEngine;
         for (int i = 0; i < 8; i++) {
@@ -274,7 +274,7 @@ public class GuiTextOverlay {
         welcomeGraphicProgress = 0;
     }
     
-    private void drawTexturedRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
+    private static void drawTexturedRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
         float f = 1F / (float)textureWidth;
         float f1 = 1F / (float)textureHeight;
         Tessellator.instance.startDrawingQuads();
