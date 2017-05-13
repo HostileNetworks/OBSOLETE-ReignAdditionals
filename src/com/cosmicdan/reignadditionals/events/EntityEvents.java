@@ -10,6 +10,8 @@ import com.cosmicdan.reignadditionals.ModConfig;
 import com.cosmicdan.reignadditionals.client.gui.GuiGameOverlay;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 import com.cosmicdan.reignadditionals.items.ModItems;
+import com.cosmicdan.reignadditionals.server.GuiInfoPacket;
+import com.cosmicdan.reignadditionals.server.PacketHandler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import ftb.utils.world.LMWorldServer;
@@ -171,21 +173,31 @@ public class EntityEvents {
             int[] hqPos = HeadquartersTracker.get(event.entityLiving.worldObj).getHqPos(claimOwner, event.entityLiving.worldObj);
             if (hqPos != null) {
                 int fluxWorth = (int) event.entityLiving.getMaxHealth() / 20; // one flux per 20 HP
+                int fluxMaxPerStack = new ItemStack(ModItems.CRYSTALIZED_FLUX).getMaxStackSize();
                 TileTownHall hq = (TileTownHall) event.entityLiving.worldObj.getTileEntity(hqPos[0], hqPos[1], hqPos[2]);
-                int hqMaxSlots = hq.getSizeInventory();
                 synchronized (LIVING_DROPS_EVENT_LOCK) {
-                    for (int fluxCount = 1; fluxCount <= fluxWorth; fluxCount++) {
-                        for (int slot = hqMaxSlots - 1; slot >= 0; slot--) {
-                            ItemStack thisSlotStack = hq.getStackInSlot(slot);
-                            if (thisSlotStack == null) {
-                                // empty slot
-                                hq.setInventorySlotContents(slot, new ItemStack(ModItems.CRYSTALIZED_FLUX, 1));
-                                break;
-                            } else {
-                                // existing item in this slot
-                                if (thisSlotStack.getItem() == ModItems.CRYSTALIZED_FLUX && thisSlotStack.stackSize < thisSlotStack.getMaxStackSize()) {
-                                    hq.setInventorySlotContents(slot, new ItemStack(ModItems.CRYSTALIZED_FLUX, thisSlotStack.stackSize + 1));
-                                    break;
+                    for (int slot = hq.getSizeInventory() - 1; slot >= 0; slot--) {
+                        if (fluxWorth <= 0)
+                            break;
+                        ItemStack thisSlotStack = hq.getStackInSlot(slot);
+                        int toDeposit = fluxWorth;
+                        if (thisSlotStack == null) {
+                            // empty slot
+                            if (toDeposit > fluxMaxPerStack) {
+                                toDeposit = fluxMaxPerStack;
+                            }
+                            fluxWorth -= toDeposit;
+                            hq.setInventorySlotContents(slot, new ItemStack(ModItems.CRYSTALIZED_FLUX, toDeposit));
+                        } else {
+                            // existing item in this slot
+                            if (thisSlotStack.getItem() == ModItems.CRYSTALIZED_FLUX) {
+                                int roomInThisSlot = fluxMaxPerStack - thisSlotStack.stackSize; 
+                                if (roomInThisSlot > 0) {
+                                    if (toDeposit > roomInThisSlot) {
+                                        toDeposit = roomInThisSlot;
+                                    }
+                                    fluxWorth -= toDeposit; 
+                                    hq.setInventorySlotContents(slot, new ItemStack(ModItems.CRYSTALIZED_FLUX, thisSlotStack.stackSize + toDeposit));
                                 }
                             }
                         }

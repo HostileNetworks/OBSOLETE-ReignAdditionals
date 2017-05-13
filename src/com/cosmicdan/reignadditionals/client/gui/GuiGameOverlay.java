@@ -3,17 +3,22 @@ package com.cosmicdan.reignadditionals.client.gui;
 import org.lwjgl.opengl.GL11;
 
 import com.cosmicdan.reignadditionals.ModConfig;
+import com.cosmicdan.reignadditionals.items.ModItems;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.shadowmage.ancientwarfare.core.gamedata.Timekeeper;
+import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
 
 public class GuiGameOverlay {
     private final Minecraft mc;
@@ -21,12 +26,16 @@ public class GuiGameOverlay {
     private static EntityPlayer player;
     private static int screenWidth;
     private static int screenHeight;
+    protected static final RenderItem itemRenderer = new RenderItem();
     
     private static final ResourceLocation[] iconsMoonphases = new ResourceLocation[8];
     private static final ResourceLocation[] iconsSeasons = new ResourceLocation[4];
+    private static final ResourceLocation compassTexture = new ResourceLocation("reignadditionals:textures/gui/compass.png");
+    private static final int compassTexWidth = 360;
+    private static final int compassTexHeight = 64;
     
-    private static int TICKER_MAX = 15;
-    private static int TICKER = TICKER_MAX;
+    private static int TICKER_INFO_MAX = 15;
+    private static int TICKER_INFO = 0;
     
     private static int lastDay = -1;
     private static int currentDay = 0;
@@ -44,6 +53,10 @@ public class GuiGameOverlay {
     private static boolean doNewDayText = false;
     private static int newDayDrawTime = 0;
     
+    // updated via server packets
+    public static int cachedFluxStore = -2;
+    public static boolean isNearlyFull = false; 
+    
     public GuiGameOverlay(Minecraft mc) {
         this.mc = mc;
         this.re = mc.renderEngine;
@@ -56,7 +69,7 @@ public class GuiGameOverlay {
     }
     
     @SubscribeEvent
-    public void drawOverlay(RenderGameOverlayEvent event) {
+    public void drawOverlay(RenderGameOverlayEvent.Post event) {
         if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {      
             return;
         }
@@ -68,10 +81,9 @@ public class GuiGameOverlay {
         screenWidth = event.resolution.getScaledWidth();
         screenHeight = event.resolution.getScaledHeight();
         
-        // update the current day/year values
-        TICKER++;
-        if (TICKER >= TICKER_MAX) {
-            TICKER = 0;
+        TICKER_INFO++;
+        if (TICKER_INFO == TICKER_INFO_MAX) {
+            TICKER_INFO = 0;
             currentDay = (int) ((player.worldObj.getWorldTime() / 24000L));
             currentYear = currentDay / ModConfig.daysPerYear + ModConfig.STARTING_YEAR;
             if (currentYear > ModConfig.STARTING_YEAR) {
@@ -81,29 +93,49 @@ public class GuiGameOverlay {
             int posX = MathHelper.floor_double(player.posX);
             int posZ = MathHelper.floor_double(player.posZ);
             biomeName = mc.theWorld.getChunkFromBlockCoords(posX, posZ).getBiomeGenForWorldCoords(posX & 15, posZ & 15, this.mc.theWorld.getWorldChunkManager()).biomeName;
+            
+            if (lastDay != currentDay) {
+                // new day, refresh moonphase and season
+                currentMoonphase = player.worldObj.getMoonPhase();
+                currentSeason = currentDay / ModConfig.daysPerSeason;
+                doNewDayText = true;
+                newDayDrawTime = 0;
+                daysUntilFullMoon = ModConfig.daysPerMonth - (currentDay % ModConfig.daysPerMonth);
+                daysUntilNextSeason = ModConfig.daysPerSeason - (currentDay % ModConfig.daysPerSeason);
+            }
+            lastDay = currentDay;
+            
+            
+            line1 = Timekeeper.getTimeOfDayHour() +
+                    ":" +
+                    (Timekeeper.getTimeOfDayMinute() < 10 ? "0" : "") + Timekeeper.getTimeOfDayMinute() +
+                    ", " +
+                    biomeName;
+                    
+            line2 = "Day " + (currentDay + 1 + (Timekeeper.getTimeOfDayHour() < 6 ? 1 : 0)) + ", " + currentYear + " " + ModConfig.YEAR_SUFFIX;
         }
         
-        if (lastDay != currentDay) {
-            // new day, refresh moonphase and season
-            currentMoonphase = player.worldObj.getMoonPhase();
-            currentSeason = currentDay / ModConfig.daysPerSeason;
-            doNewDayText = true;
-            newDayDrawTime = 0;
-            daysUntilFullMoon = ModConfig.daysPerMonth - (currentDay % ModConfig.daysPerMonth);
-            daysUntilNextSeason = ModConfig.daysPerSeason - (currentDay % ModConfig.daysPerSeason);
-        }
-        lastDay = currentDay;
         
+        // compass
+        /*
+        int directionBearing = MathHelper.floor_double((double)MathHelper.wrapAngleTo180_float(this.mc.thePlayer.rotationYaw));
+        if (directionBearing < 0)
+            directionBearing += 360;
+        // scale multiplier (corresponds to glScaled later) 
+        int scaleMulti = 2;
+        // viewport limiter is what factor the display is "narrowed" by
+        double viewportLimiter = 2.2D;
+        int compassXStart = (int) ((screenWidth * scaleMulti - (compassTexWidth / viewportLimiter)) / 2);
+        int compassYStart = 8;
+        int compassUStart = (int) (directionBearing + 45 + (45 * viewportLimiter));
+        GL11.glPushMatrix();
+        GL11.glScaled(0.5D, 0.5D, 1.0D);
+        re.bindTexture(compassTexture);
+        drawTexturedRect(compassXStart, compassYStart, compassUStart, 0, (int) (compassTexWidth / viewportLimiter), compassTexHeight, compassTexWidth, compassTexHeight);
+        GL11.glPopMatrix();
+        */
         
-        line1 = Timekeeper.getTimeOfDayHour() +
-                ":" +
-                (Timekeeper.getTimeOfDayMinute() < 10 ? "0" : "") + Timekeeper.getTimeOfDayMinute() +
-                ", " +
-                biomeName;
-                
-        line2 = "Day " + (currentDay + 1 + (Timekeeper.getTimeOfDayHour() < 6 ? 1 : 0)) + ", " + currentYear + " " + ModConfig.YEAR_SUFFIX;
-        
-
+        // first row icons and text
         GL11.glPushMatrix();
         GL11.glScaled(0.75, 0.75, 1.0);
         mc.fontRenderer.drawString(line1, 40, 1, 0x00FFFFFF, true);
@@ -112,8 +144,24 @@ public class GuiGameOverlay {
         drawTexturedRect(1, 2, 0, 0, 16, 16, 16, 16);
         re.bindTexture(iconsSeasons[currentSeason]);
         drawTexturedRect(20, 2, 0, 0, 16, 16, 16, 16);
+        GL11.glPopMatrix();
+        
+        // second row icons and text
+        GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_LIGHTING);
+        //GL11.glScaled(0.85, 0.85, 1.0);
+        itemRenderer.renderItemIntoGUI(this.mc.fontRenderer, re, new ItemStack(ModItems.CRYSTALIZED_FLUX, 100), -1, 14);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        String fluxStoreText = cachedFluxStore < 0 ? (cachedFluxStore == -1 ? "NO HQ" : "") : Integer.toString(cachedFluxStore);
+        int fluxStoreTextColor = isNearlyFull ? 0x00FF5555 : 0x00FFFFFF;
+        GL11.glScaled(0.5, 0.5, 1.0);
+        //System.out.println();
+        mc.fontRenderer.drawString(fluxStoreText, 14 - (int)(mc.fontRenderer.getStringWidth(fluxStoreText) * 0.5), 48, fluxStoreTextColor, true);
+        
+        GL11.glPopMatrix();
         
         if (doNewDayText) {
+            GL11.glPushMatrix();
             newDayDrawTime++;
             
             // calculate alphas for fade-outs
@@ -205,9 +253,8 @@ public class GuiGameOverlay {
                 // reset alpha
                 GL11.glColor4f(255, 255, 255, 255f);
             }
+            GL11.glPopMatrix();
         }
-                
-        GL11.glPopMatrix();
     }
     
     private static boolean fireWelcomeGraphic = false;
@@ -285,4 +332,29 @@ public class GuiGameOverlay {
         Tessellator.instance.draw();
     }
     
+    // based on method with same name from GuiIngame
+    private void renderInventorySlot(ItemStack itemstack, int x, int y) {
+
+        if (itemstack != null) {
+            
+            
+            /*
+            GL11.glPushMatrix();
+            
+            float f2 = 1.0F + f1 / 5.0F;
+            GL11.glTranslatef((float)(x + 8), (float)(y + 12), 0.0F);
+            GL11.glScalef(1.0F / f2, (f2 + 1.0F) / 2.0F, 1.0F);
+            GL11.glTranslatef((float)(-(x + 8)), (float)(-(y + 12)), 0.0F);
+            */
+
+            //itemRenderer.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.getTextureManager(), itemstack, x, y);
+
+            //if (f1 > 0.0F)
+            //{
+            //    GL11.glPopMatrix();
+            //}
+
+            //itemRenderer.renderItemOverlayIntoGUI(this.mc.fontRenderer, this.mc.getTextureManager(), itemstack, x, y);
+        }
+    }
 }
