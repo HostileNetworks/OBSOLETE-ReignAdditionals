@@ -24,6 +24,13 @@ public class GuiGameOverlay {
     private final Minecraft mc;
     private final TextureManager re;
     private static EntityPlayer player;
+    private static int playerX;
+    private static int playerY;
+    private static int playerZ;
+    private static int playerChunkOffsetX;
+    private static int playerChunkOffsetZ;
+    private static int playerChunkPosX;
+    private static int playerChunkPosZ;
     private static int screenWidth;
     private static int screenHeight;
     protected static final RenderItem itemRenderer = new RenderItem();
@@ -33,9 +40,12 @@ public class GuiGameOverlay {
     private static final ResourceLocation compassTexture = new ResourceLocation("reignadditionals:textures/gui/compass.png");
     private static final int compassTexWidth = 360;
     private static final int compassTexHeight = 64;
+    private static final ResourceLocation chunkMap = new ResourceLocation("reignadditionals:textures/gui/chunk_map.png");
+    private static final ResourceLocation chunkMapIndicator = new ResourceLocation("reignadditionals:textures/gui/chunk_map_indicator.png");
     
-    private static int TICKER_INFO_MAX = 15;
-    private static int TICKER_INFO = 0;
+    private static int TICKER_MAX = 8;
+    private static int TICKER = 0;
+    private static boolean TOCKER = false;
     
     private static int lastDay = -1;
     private static int currentDay = 0;
@@ -81,44 +91,56 @@ public class GuiGameOverlay {
         screenWidth = event.resolution.getScaledWidth();
         screenHeight = event.resolution.getScaledHeight();
         
-        TICKER_INFO++;
-        if (TICKER_INFO == TICKER_INFO_MAX) {
-            TICKER_INFO = 0;
-            currentDay = (int) ((player.worldObj.getWorldTime() / 24000L));
-            currentYear = currentDay / ModConfig.daysPerYear + ModConfig.STARTING_YEAR;
-            if (currentYear > ModConfig.STARTING_YEAR) {
-                currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * ModConfig.daysPerYear);
+        
+        TICKER++;
+        if (TICKER == TICKER_MAX) {
+            // update some relatively-expensive info only so-often
+            TICKER = 0;
+            TOCKER = !TOCKER;
+            
+            playerX = MathHelper.floor_double(player.posX);
+            playerY = MathHelper.floor_double(player.posY);
+            playerZ = MathHelper.floor_double(player.posZ);
+            playerChunkOffsetX = playerX & 15;
+            playerChunkOffsetZ = playerZ & 15;
+            
+            if (TOCKER) {
+                currentDay = (int) ((player.worldObj.getWorldTime() / 24000L));
+                currentYear = currentDay / ModConfig.daysPerYear + ModConfig.STARTING_YEAR;
+                if (currentYear > ModConfig.STARTING_YEAR) {
+                    currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * ModConfig.daysPerYear);
+                }
+                
+                playerChunkPosX = playerX >> 4;
+                playerChunkPosZ = playerZ >> 4;
+                biomeName = mc.theWorld.getChunkFromChunkCoords(playerChunkPosX, playerChunkPosZ).getBiomeGenForWorldCoords(playerChunkOffsetX, playerChunkOffsetZ, this.mc.theWorld.getWorldChunkManager()).biomeName;
+                
+                if (lastDay != currentDay) {
+                    // new day, refresh moonphase and season
+                    currentMoonphase = player.worldObj.getMoonPhase();
+                    currentSeason = currentDay / ModConfig.daysPerSeason;
+                    doNewDayText = true;
+                    newDayDrawTime = 0;
+                    daysUntilFullMoon = ModConfig.daysPerMonth - (currentDay % ModConfig.daysPerMonth);
+                    daysUntilNextSeason = ModConfig.daysPerSeason - (currentDay % ModConfig.daysPerSeason);
+                }
+                lastDay = currentDay;
+                
+                
+                line1 = Timekeeper.getTimeOfDayHour() +
+                        ":" +
+                        (Timekeeper.getTimeOfDayMinute() < 10 ? "0" : "") + Timekeeper.getTimeOfDayMinute() +
+                        ", " +
+                        biomeName;
+                        
+                line2 = "Day " + (currentDay + 1 + (Timekeeper.getTimeOfDayHour() < 6 ? 1 : 0)) + ", " + currentYear + " " + ModConfig.YEAR_SUFFIX;
             }
-            // also update the current biome name
-            int posX = MathHelper.floor_double(player.posX);
-            int posZ = MathHelper.floor_double(player.posZ);
-            biomeName = mc.theWorld.getChunkFromBlockCoords(posX, posZ).getBiomeGenForWorldCoords(posX & 15, posZ & 15, this.mc.theWorld.getWorldChunkManager()).biomeName;
-            
-            if (lastDay != currentDay) {
-                // new day, refresh moonphase and season
-                currentMoonphase = player.worldObj.getMoonPhase();
-                currentSeason = currentDay / ModConfig.daysPerSeason;
-                doNewDayText = true;
-                newDayDrawTime = 0;
-                daysUntilFullMoon = ModConfig.daysPerMonth - (currentDay % ModConfig.daysPerMonth);
-                daysUntilNextSeason = ModConfig.daysPerSeason - (currentDay % ModConfig.daysPerSeason);
-            }
-            lastDay = currentDay;
-            
-            
-            line1 = Timekeeper.getTimeOfDayHour() +
-                    ":" +
-                    (Timekeeper.getTimeOfDayMinute() < 10 ? "0" : "") + Timekeeper.getTimeOfDayMinute() +
-                    ", " +
-                    biomeName;
-                    
-            line2 = "Day " + (currentDay + 1 + (Timekeeper.getTimeOfDayHour() < 6 ? 1 : 0)) + ", " + currentYear + " " + ModConfig.YEAR_SUFFIX;
         }
         
         
         // compass
         /*
-        int directionBearing = MathHelper.floor_double((double)MathHelper.wrapAngleTo180_float(this.mc.thePlayer.rotationYaw));
+        int directionBearing = MathHelper.floor_double((double)MathHelper.wrapAngleTo180_float(player.rotationYaw));
         if (directionBearing < 0)
             directionBearing += 360;
         // scale multiplier (corresponds to glScaled later) 
@@ -135,30 +157,47 @@ public class GuiGameOverlay {
         GL11.glPopMatrix();
         */
         
-        // first row icons and text
-        GL11.glPushMatrix();
-        GL11.glScaled(0.75, 0.75, 1.0);
-        mc.fontRenderer.drawString(line1, 40, 1, 0x00FFFFFF, true);
-        mc.fontRenderer.drawString(line2, 40, mc.fontRenderer.FONT_HEIGHT + 2, 0x00FFFFFF, true);
-        re.bindTexture(iconsMoonphases[currentMoonphase]);
-        drawTexturedRect(1, 2, 0, 0, 16, 16, 16, 16);
-        re.bindTexture(iconsSeasons[currentSeason]);
-        drawTexturedRect(20, 2, 0, 0, 16, 16, 16, 16);
-        GL11.glPopMatrix();
-        
-        // second row icons and text
+        // first row - CF indicator
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_LIGHTING);
-        //GL11.glScaled(0.85, 0.85, 1.0);
-        itemRenderer.renderItemIntoGUI(this.mc.fontRenderer, re, new ItemStack(ModItems.CRYSTALIZED_FLUX, 100), -1, 14);
+        itemRenderer.renderItemIntoGUI(this.mc.fontRenderer, re, new ItemStack(ModItems.CRYSTALIZED_FLUX, 100), -1, -1);
         GL11.glDisable(GL11.GL_LIGHTING);
         String fluxStoreText = cachedFluxStore < 0 ? (cachedFluxStore == -1 ? "NO HQ" : "") : Integer.toString(cachedFluxStore);
         int fluxStoreTextColor = isNearlyFull ? 0x00FF5555 : 0x00FFFFFF;
         GL11.glScaled(0.5, 0.5, 1.0);
-        //System.out.println();
-        mc.fontRenderer.drawString(fluxStoreText, 14 - (int)(mc.fontRenderer.getStringWidth(fluxStoreText) * 0.5), 48, fluxStoreTextColor, true);
-        
+        mc.fontRenderer.drawString(fluxStoreText, 15 - (int)(mc.fontRenderer.getStringWidth(fluxStoreText) * 0.5), 20, fluxStoreTextColor, true);
         GL11.glPopMatrix();
+        // first row - moonphase
+        GL11.glPushMatrix();
+        GL11.glScaled(0.75, 0.75, 1.0);
+        re.bindTexture(iconsMoonphases[currentMoonphase]);
+        drawTexturedRect(20, 2, 0, 0, 16, 16, 16, 16);
+        // first row - season
+        re.bindTexture(iconsSeasons[currentSeason]);
+        drawTexturedRect(40, 2, 0, 0, 16, 16, 16, 16);
+        GL11.glPopMatrix();
+        // first row - time, date and biome text
+        GL11.glPushMatrix();
+        GL11.glScaled(0.65, 0.65, 1.0);
+        mc.fontRenderer.drawString(line1, 70, 2, 0x00FFFFFF, true);
+        mc.fontRenderer.drawString(line2, 70, mc.fontRenderer.FONT_HEIGHT + 4, 0x00FFFFFF, true);
+        GL11.glPopMatrix();
+        
+        // second row icons and text (co-ord info)
+        if (player.isSneaking()) {
+            GL11.glPushMatrix();
+            GL11.glScaled(0.6, 0.6, 1.0);
+            re.bindTexture(chunkMap);
+            drawTexturedRect(3, 28, 0, 0, 18, 18, 18, 18);
+            re.bindTexture(chunkMapIndicator);
+            drawTexturedRect(4 + playerChunkOffsetX, 29 + playerChunkOffsetZ, 0, 0, 1, 1, 1, 1);
+            GL11.glPopMatrix();
+            GL11.glPushMatrix();
+            GL11.glScaled(0.55, 0.55, 1.0);
+            mc.fontRenderer.drawString("Chunk: " + playerChunkPosX + "x" + playerChunkPosZ, 30, 30, 0x00FFFFFF, true);
+            mc.fontRenderer.drawString("Height: " + playerY, 30, mc.fontRenderer.FONT_HEIGHT + 32, 0x00FFFFFF, true);
+            GL11.glPopMatrix();
+        }
         
         if (doNewDayText) {
             GL11.glPushMatrix();
