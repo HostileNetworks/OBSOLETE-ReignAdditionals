@@ -10,8 +10,6 @@ import com.cosmicdan.reignadditionals.ModConfig;
 import com.cosmicdan.reignadditionals.client.gui.GuiGameOverlay;
 import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 import com.cosmicdan.reignadditionals.items.ModItems;
-import com.cosmicdan.reignadditionals.server.GuiInfoPacket;
-import com.cosmicdan.reignadditionals.server.PacketHandler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import ftb.utils.world.LMWorldServer;
@@ -22,6 +20,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -36,7 +35,6 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.minecart.MinecartUpdateEvent;
 import net.shadowmage.ancientwarfare.core.interop.ModAccessors;
 import net.shadowmage.ancientwarfare.npc.gamedata.HeadquartersTracker;
-import net.shadowmage.ancientwarfare.npc.tile.TileTownHall;
 import openblocks.api.GraveSpawnEvent;
 
 public class EntityEvents {
@@ -174,7 +172,7 @@ public class EntityEvents {
             if (hqPos != null) {
                 int fluxWorth = (int) event.entityLiving.getMaxHealth() / 20; // one flux per 20 HP
                 int fluxMaxPerStack = new ItemStack(ModItems.CRYSTALIZED_FLUX).getMaxStackSize();
-                TileTownHall hq = (TileTownHall) event.entityLiving.worldObj.getTileEntity(hqPos[0], hqPos[1], hqPos[2]);
+                IInventory hq = (IInventory) event.entityLiving.worldObj.getTileEntity(hqPos[0], hqPos[1], hqPos[2]);
                 synchronized (LIVING_DROPS_EVENT_LOCK) {
                     for (int slot = hq.getSizeInventory() - 1; slot >= 0; slot--) {
                         if (fluxWorth <= 0)
