@@ -159,10 +159,11 @@ public class EntityEvents {
     public void onLivingDropsFromDeath(LivingDropsEvent event) {
         if (event.entityLiving.worldObj.isRemote)
             return;
+        
         /*
-         * Add Crystalized Flux to player HQ if this was a mob that died in player territory
+         * Add Crystalized Flux to player HQ if this was a JAS-spawned mob that died in player territory
          */
-        if (!(event.entityLiving instanceof IMob))
+        if (!(event.entityLiving instanceof IMob) || !(event.entityLiving.getEntityData().hasKey("IS_JAS_SPAWNED")))
             return;
     
         ClaimedChunk claim = LMWorldServer.inst.claimedChunks.getChunk(event.entityLiving.worldObj.provider.dimensionId, event.entity.chunkCoordX, event.entity.chunkCoordZ);
