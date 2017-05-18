@@ -14,6 +14,7 @@ import com.cosmicdan.reignadditionals.items.ModItems;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import ftb.utils.world.LMWorldServer;
 import ftb.utils.world.claims.ClaimedChunk;
+import funwayguy.esm.core.ESM_Utils;
 import jas.spawner.modern.ForgeEvents.StartSpawnCreaturesInChunks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
@@ -139,6 +140,10 @@ public class EntityEvents {
     
     @SubscribeEvent
     public void onStartSpawnCreaturesInChunks(StartSpawnCreaturesInChunks event) {
+        if (event.creatureType.typeID.equals("SIEGE")) {
+            if (!ESM_Utils.isSiegeAllowed(event.world.getWorldTime())) // we only want to let SIEGE mobs spawn during sieges
+                return;
+        }
         ClaimedChunk claim = LMWorldServer.inst.claimedChunks.getChunk(event.world.provider.dimensionId, event.chunkCoordIntPair.chunkXPos, event.chunkCoordIntPair.chunkZPos);
         if (claim != null) {
             if (claim.ownerID == -1) {
