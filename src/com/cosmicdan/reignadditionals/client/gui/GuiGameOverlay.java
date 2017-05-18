@@ -46,6 +46,7 @@ public class GuiGameOverlay {
     private static int TICKER_MAX = 8;
     private static int TICKER = 0;
     private static boolean TOCKER = false;
+    private static long lastWorldtimeDayCheck = Long.MIN_VALUE; // used as a cache so per-day values are only updated per-day
     
     private static int lastDay = -1;
     private static int currentDay = 0;
@@ -105,10 +106,14 @@ public class GuiGameOverlay {
             playerChunkOffsetZ = playerZ & 15;
             
             if (TOCKER) {
-                currentDay = (int) ((player.worldObj.getWorldTime() / 24000L));
-                currentYear = currentDay / ModConfig.daysPerYear + ModConfig.STARTING_YEAR;
-                if (currentYear > ModConfig.STARTING_YEAR) {
-                    currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * ModConfig.daysPerYear);
+                if ((player.worldObj.getWorldTime() >= lastWorldtimeDayCheck + 24000L) || player.worldObj.getWorldTime() < lastWorldtimeDayCheck) {
+                    // new day
+                    currentDay = (int) ((player.worldObj.getWorldTime() / 24000L));
+                    lastWorldtimeDayCheck = currentDay * 24000L;
+                    currentYear = currentDay / ModConfig.daysPerYear + ModConfig.STARTING_YEAR;
+                    if (currentYear > ModConfig.STARTING_YEAR) {
+                        currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * ModConfig.daysPerYear);
+                    }
                 }
                 
                 playerChunkPosX = playerX >> 4;
@@ -157,11 +162,13 @@ public class GuiGameOverlay {
         GL11.glPopMatrix();
         */
         
+        
         // first row - CF indicator
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_LIGHTING);
         itemRenderer.renderItemIntoGUI(this.mc.fontRenderer, re, new ItemStack(ModItems.CRYSTALIZED_FLUX, 100), -1, -1);
         GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_BLEND);
         String fluxStoreText = cachedFluxStore < 0 ? (cachedFluxStore == -1 ? "NO HQ" : "") : Integer.toString(cachedFluxStore);
         int fluxStoreTextColor = isNearlyFull ? 0x00FF5555 : 0x00FFFFFF;
         GL11.glScaled(0.5, 0.5, 1.0);
@@ -182,6 +189,7 @@ public class GuiGameOverlay {
         mc.fontRenderer.drawString(line1, 70, 2, 0x00FFFFFF, true);
         mc.fontRenderer.drawString(line2, 70, mc.fontRenderer.FONT_HEIGHT + 4, 0x00FFFFFF, true);
         GL11.glPopMatrix();
+        
         
         // second row icons and text (co-ord info)
         if (player.isSneaking()) {
@@ -369,31 +377,5 @@ public class GuiGameOverlay {
         Tessellator.instance.addVertexWithUV((double)(x + width), (double)(y), 0, (double)((float)(u + width) * f), (double)((float)(v) * f1));
         Tessellator.instance.addVertexWithUV((double)(x), (double)(y), 0, (double)((float)(u) * f), (double)((float)(v) * f1));
         Tessellator.instance.draw();
-    }
-    
-    // based on method with same name from GuiIngame
-    private void renderInventorySlot(ItemStack itemstack, int x, int y) {
-
-        if (itemstack != null) {
-            
-            
-            /*
-            GL11.glPushMatrix();
-            
-            float f2 = 1.0F + f1 / 5.0F;
-            GL11.glTranslatef((float)(x + 8), (float)(y + 12), 0.0F);
-            GL11.glScalef(1.0F / f2, (f2 + 1.0F) / 2.0F, 1.0F);
-            GL11.glTranslatef((float)(-(x + 8)), (float)(-(y + 12)), 0.0F);
-            */
-
-            //itemRenderer.renderItemAndEffectIntoGUI(this.mc.fontRenderer, this.mc.getTextureManager(), itemstack, x, y);
-
-            //if (f1 > 0.0F)
-            //{
-            //    GL11.glPopMatrix();
-            //}
-
-            //itemRenderer.renderItemOverlayIntoGUI(this.mc.fontRenderer, this.mc.getTextureManager(), itemstack, x, y);
-        }
     }
 }
