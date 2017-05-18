@@ -5,6 +5,7 @@ import com.cosmicdan.reignadditionals.gamedata.PlayerTeleporterTracker;
 import com.cosmicdan.reignadditionals.items.ModItems;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import funwayguy.esm.core.ESM_Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -96,15 +97,7 @@ public class PlayerEvents {
     @SubscribeEvent
     public void playerSleepInBed(PlayerSleepInBedEvent event) {
         if (Timekeeper.isNighttime()) {
-            
-            // check if today is a siege day
-            int currentDay = (int) ((event.entityPlayer.worldObj.getWorldTime() / 24000L));
-            int currentYear = currentDay / ModConfig.daysPerYear + ModConfig.STARTING_YEAR;
-            if (currentYear > ModConfig.STARTING_YEAR) {
-                currentDay = currentDay - ((currentYear - ModConfig.STARTING_YEAR) * ModConfig.daysPerYear);
-            }
-            int daysUntilFullMoon = ModConfig.daysPerMonth - (currentDay % ModConfig.daysPerMonth);
-            if ((daysUntilFullMoon == ModConfig.daysPerMonth) && (currentDay > 1)) {
+            if (ESM_Utils.isSiegeAllowed(event.entityPlayer.worldObj.getWorldTime())) {
                 // is a siege day, don't let the player sleep
                 event.result = EntityPlayer.EnumStatus.OTHER_PROBLEM;
                 event.entityPlayer.addChatComponentMessage(new ChatComponentTranslation("siegeevent.cantsleep.msg"));
